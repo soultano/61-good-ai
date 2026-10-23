@@ -38,8 +38,21 @@ async function kv(...cmd) {
   if (j.error) throw new Error(j.error);
   return j.result;
 }
+// Several commands in one round trip; returns their results in order.
+async function kvPipe(cmds) {
+  if (!cmds.length) return [];
+  if (!KV_URL) return cmds.map(memCmd);
+  const r = await fetch(KV_URL.replace(/\/$/, "") + "/pipeline", { method: "POST", headers: { Authorization: `Bearer ${KV_TOKEN}` }, body: JSON.stringify(cmds) });
+  const j = await r.json();
+  return j.map(x => { if (x.error) throw new Error(x.error); return x.result; });
+}
 function memCmd([op, k, ...a]) {
   switch (op) {
+    case "INCRBY": { const v = Number(mem.get(k) || 0) + Number(a[0]); mem.set(k, String(v)); return v; }
+    case "HSET": { const h = mem.get(k) || new Map(); for (let i = 0; i < a.length; i += 2) h.set(String(a[i]), String(a[i + 1])); mem.set(k, h); return 1; }
+    case "HGET": { const h = mem.get(k); return h && h.has(String(a[0])) ? h.get(String(a[0])) : null; }
+    case "HGETALL": return [...(mem.get(k) || new Map())].flat();
+    case "SISMEMBER": return (mem.get(k) || new Set()).has(String(a[0])) ? 1 : 0;
     case "GET": return mem.get(k) ?? null;
     case "SET": mem.set(k, a[0]); return "OK";
     case "SADD": { const s = mem.get(k) || new Set(); a.forEach(x => s.add(String(x))); mem.set(k, s); return 1; }
@@ -49,6 +62,7 @@ function memCmd([op, k, ...a]) {
   throw new Error("unsupported " + op);
 }
 
+const hash = arr => { const o = {}; for (let i = 0; i < (arr || []).length; i += 2) o[arr[i]] = arr[i + 1]; return o; };
 const getUser = async id => { const v = await kv("GET", `user:${id}`); return v ? JSON.parse(v) : null; };
 const saveUser = u => kv("SET", `user:${u.id}`, JSON.stringify(u));
 async function listPending() {
@@ -95,4 +109,4 @@ function auth(req, res) {
   return { user, body };
 }
 
-module.exports = { BOT_TOKEN, ADMIN_IDS, isAdmin, verifyInitData, webhookSecret, kv, getUser, saveUser, listPending, decideTeacher, tg, pub, readBody, send, auth, storage: KV_URL ? "redis" : "memory" };
+module.exports = { BOT_TOKEN, ADMIN_IDS, isAdmin, verifyInitData, webhookSecret, kv, kvPipe, hash, getUser, saveUser, listPending, decideTeacher, tg, pub, readBody, send, auth, storage: KV_URL ? "redis" : "memory" };

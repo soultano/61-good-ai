@@ -73,14 +73,6 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .facts div{background:var(--paper);border-radius:14px;padding:10px 12px;font-size:12px;color:var(--muted);font-weight:700}
 .facts b{display:block;color:var(--ink);font-size:14px}
 
-/* chat */
-.chat{display:flex;flex-direction:column;gap:10px}
-.msg{max-width:84%;padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.45;font-weight:600}
-.msg.bot{background:#fff;border-bottom-left-radius:6px;box-shadow:0 2px 0 var(--soft)}
-.msg.me{background:var(--ink);color:#fff;margin-left:auto;border-bottom-right-radius:6px}
-.sugs{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.sugs button{background:#fff;border:1.5px dashed var(--violet);color:var(--violet);border-radius:14px;padding:10px 12px;text-align:left;font-weight:800;font-size:13px}
-.typing{display:inline-flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:b 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
 @keyframes b{50%{transform:translateY(-4px);opacity:.5}}
 
 /* profile */
@@ -98,10 +90,6 @@ button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
 .goal{background:linear-gradient(135deg,#E5FFB0,#C8F5FF);border-radius:22px;padding:16px;margin-bottom:14px}
 .goal b{font-size:14px}.goal p{font-size:12px;color:var(--muted);font-weight:700;margin:4px 0 10px}
 .goal .bar{width:100%;height:9px;background:rgba(255,255,255,.7)}.goal .bar i{background:var(--ink)}
-.drops{display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
-.drop{flex:none;width:140px;background:#fff;border-radius:18px;padding:12px;box-shadow:0 2px 0 var(--soft)}
-.drop .e{font-size:30px}.drop b{display:block;font-size:13px;margin:6px 0 2px}.drop span{font-size:12px;font-weight:800;color:var(--violet)}
-.drop .lim{font-size:10px;font-weight:800;color:var(--pink)}
 
 /* tabbar */
 .tabs{position:absolute;left:12px;right:12px;bottom:12px;background:var(--ink);border-radius:26px;display:flex;justify-content:space-around;padding:8px;z-index:20}
@@ -161,6 +149,12 @@ select.fld{appearance:none;-webkit-appearance:none}
 .adm .acts{margin-left:auto;display:flex;gap:6px}
 .adm .acts button{font-weight:800;font-size:12px;padding:8px 10px;border-radius:11px;background:var(--lime)}
 .adm .acts button.no{background:var(--soft)}
+textarea.fld{min-height:84px;resize:vertical}
+.cats{display:flex;flex-wrap:wrap;gap:6px}.cats button{padding:8px 11px;border-radius:999px;background:var(--paper);border:1.5px solid var(--soft);font-weight:800;font-size:13px}.cats button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tcard .meta{font-size:12px;color:var(--muted);font-weight:700}
+.tcard .hd{display:flex;gap:12px;align-items:center;margin-bottom:6px}.tcard .hd .ic{width:44px;height:44px;font-size:22px}
+.lnk{font-weight:800;font-size:13px;color:var(--muted);text-decoration:underline;margin-top:10px;display:inline-block}
+.muted{color:var(--muted);font-weight:700;margin:4px 0 16px}
 </style>
 </head>
 <body>
@@ -176,119 +170,88 @@ select.fld{appearance:none;-webkit-appearance:none}
 
 <script>
 const T = {
-  uz:{sideT:"Interaktiv prototip",sideP:"O‘quvchi ilovasining bosiladigan demosi: qiziqishlarni tanla, missiyaga yozil, AI-agentdan so‘ra va GOOD-ballar ol.",tips:["1 · Qiziqishlarni tanla","2 · Kartochkani bos → JOIN","3 · «AI» tabida savol ber","4 · Profilda darajang va GOOD DROP"],back:"← Saytga",
-    o1t:"61-maktabga xush kelibsan!",o1p:"Barcha to‘garaklar, tadbirlar va GOOD-missiyalar — bitta joyda.",o1b:"Boshlash",o2t:"Senga nima qiziq?",o2p:"Kamida 2 ta tanla — AI shunga qarab tavsiya beradi.",o2b:"Davom etish",
-    hi:"Salom, Aziz 👋",grade:"7-B sinf",aiK:"AI · SEN UCHUN",aiBtn:"Ko‘rish",all:"Hammasi",missions:"GOOD-missiyalar",clubs:"To‘garaklar va tadbirlar",seeAll:"barchasi",
-    tabs:["Lenta","Missiyalar","AI","Profil"],join:"JOIN",joined:"Yozilding ✓",pending:"Tasdiq kutilmoqda",confirmSim:"O‘qituvchi tasdig‘ini simulyatsiya qilish",
-    when:"Qachon",where:"Qayerda",spots:"Joylar",reward:"Mukofot",age:"Yosh",
-    myM:"Mening missiyalarim",openM:"Ochiq missiyalar",empty:"Hali missiya yo‘q — lentadan birini tanla!",
-    aiHello:"Salom! Men 61 GOOD AI agentiman. Jadvaling va qiziqishlaringga qarab nima borligini topib beraman. Nima qidiramiz?",
-    q:["Bugun darsdan keyin nima bor?","Rasm chizishni yoqtiraman — qayerga yozilay?","GOOD-ball qanday tez yig‘aman?"],
-    a:["Bugun 15:00 da Media Club (204-xona) — 4 ta joy qoldi. 16:00 da esa Robototexnika. Seni Media Clubga yozaymi? 📸","Art Studio sen uchun! Seshanba va payshanba 14:30, 112-xona. Yana «Bezak jamoasi» missiyasi bor: +30 GOOD 🎨","Jamoaviy missiyalar eng ko‘p ball beradi: «Eko-shanba» — +40 GOOD, do‘stlaring bilan GOOD CREW bo‘lib qatnashing 🌱"],
-    lvl:"Daraja",next:"keyingi darajagacha",badges:["Faol","Ijodkor","Jamoa","Lider"],goalT:"7-B sinf maqsadi: 2000 GOOD",goalP:"Erishsak — hamkor kutubxonaga 50 ta kitob sovg‘a qiladi 📚",drops:"GOOD DROP",left:"ta qoldi",
-    toast:"tushdi! Rahmat 🙌",o1b:"🎒 Men o‘quvchiman",o1x:"🧑‍🏫 Men o‘qituvchiman",o1p:"Toshkent, Yashnobod tumani. Barcha to‘garaklar, tadbirlar va GOOD-missiyalar — bitta joyda.",grade:"61-maktab · 7-B",schT:"Bizning maktab",schA:"Aviasozlar-1, 78 · «Aviasozlar» bozori yonida",schH:"Dush–Shan 8:00–17:00",schB:"Avtobus 30, 50, 110",call:"Qo‘ng‘iroq",map:"Xarita",tHi:"Salom, ustoz 👋",tSub:"61-maktab · O‘qituvchi paneli",tNew:"Yangi GOOD-missiya",tTitle:"Nima qilish kerak?",tTitleDef:"Bayram uchun zalni bezash",tAge:"Yosh",tPeople:"Nechta o‘quvchi",tReward:"Mukofot",tPublish:"✨ AI bilan e’lon qilish",tAiPick:"AI mos o‘quvchilarni topdi",tWhy:["ijod, juma bo‘sh", "media, 7-B", "ijod, 11+", "ekologiya, faol", "IT, yaqinda yozilgan"],tJoin:"JOIN bosdi",tConfirm:"✓ Bajarildi",tConfirmed:"Tasdiqlandi",tDone:"Hammasi tasdiqlandi! Ballar o‘quvchilarga tushdi 🎉",tRule:"AI ball bermaydi — ballar faqat siz tasdiqlaganingizdan keyin tushadi.",tSwitch:"🎒 O‘quvchi",tAgain:"Yana missiya yaratish",tToast:"o‘quvchiga tushdi",interests:["Sport","IT","Ijod","Kitoblar","Media","Ekologiya","Musiqa","Fan"]},
-  ru:{sideT:"Интерактивный прототип",sideP:"Кликабельное демо приложения ученика: выбери интересы, возьми миссию, спроси AI-агента и получи GOOD-баллы.",tips:["1 · Выбери интересы","2 · Тапни карточку → JOIN","3 · Спроси что-нибудь во вкладке «AI»","4 · В профиле — уровень и GOOD DROP"],back:"← На сайт",
-    o1t:"Добро пожаловать в школу №61!",o1p:"Все кружки, события и GOOD-миссии — в одном месте.",o1b:"Начать",o2t:"Что тебе интересно?",o2p:"Выбери хотя бы 2 — AI подберёт под тебя.",o2b:"Продолжить",
-    hi:"Привет, Азиз 👋",grade:"7-Б класс",aiK:"AI · ДЛЯ ТЕБЯ",aiBtn:"Смотреть",all:"Всё",missions:"GOOD-миссии",clubs:"Кружки и события",seeAll:"все",
-    tabs:["Лента","Миссии","AI","Профиль"],join:"JOIN",joined:"Ты записан ✓",pending:"Ждёт подтверждения",confirmSim:"Симулировать подтверждение учителя",
-    when:"Когда",where:"Где",spots:"Места",reward:"Награда",age:"Возраст",
-    myM:"Мои миссии",openM:"Открытые миссии",empty:"Пока нет миссий — выбери в ленте!",
-    aiHello:"Привет! Я AI-агент 61 GOOD. Подскажу, что есть по твоим интересам и расписанию. Что ищем?",
-    q:["Что есть сегодня после уроков?","Я люблю рисовать — куда записаться?","Как быстрее набрать GOOD?"],
-    a:["Сегодня в 15:00 Media Club (каб. 204) — осталось 4 места. В 16:00 — Робототехника. Записать тебя в Media Club? 📸","Тебе в Art Studio! Вт и чт в 14:30, каб. 112. А ещё есть миссия «Команда декора»: +30 GOOD 🎨","Больше всего дают командные миссии: «Эко-суббота» — +40 GOOD. Собери GOOD CREW с друзьями 🌱"],
-    lvl:"Уровень",next:"до следующего уровня",badges:["Актив","Креатор","Команда","Лидер"],goalT:"Цель 7-Б: 2000 GOOD",goalP:"Дойдём — партнёр подарит библиотеке 50 книг 📚",drops:"GOOD DROP",left:"осталось",
-    toast:"начислено! Спасибо 🙌",o1b:"🎒 Я ученик",o1x:"🧑‍🏫 Я учитель",o1p:"Ташкент, Яшнабадский район. Все кружки, события и GOOD-миссии — в одном месте.",grade:"Школа №61 · 7-Б",schT:"Наша школа",schA:"Авиасозлар-1, 78 · у рынка «Авиасозлар»",schH:"Пн–Сб 8:00–17:00",schB:"Автобусы 30, 50, 110",call:"Позвонить",map:"Карта",tHi:"Здравствуйте, учитель 👋",tSub:"Школа №61 · Панель учителя",tNew:"Новая GOOD-миссия",tTitle:"Что нужно сделать?",tTitleDef:"Оформить зал к празднику",tAge:"Возраст",tPeople:"Сколько учеников",tReward:"Награда",tPublish:"✨ Опубликовать с AI",tAiPick:"AI нашёл подходящих учеников",tWhy:["творчество, свободна в пт", "медиа, 7-Б", "творчество, 11+", "экология, активный", "IT, недавно записался"],tJoin:"нажал JOIN",tConfirm:"✓ Выполнено",tConfirmed:"Подтверждено",tDone:"Всё подтверждено! Баллы начислены ученикам 🎉",tRule:"AI баллы не выдаёт — они начисляются только после вашего подтверждения.",tSwitch:"🎒 Ученик",tAgain:"Создать ещё миссию",tToast:"начислено ученику",interests:["Спорт","IT","Творчество","Книги","Медиа","Экология","Музыка","Наука"]},
-  en:{sideT:"Interactive prototype",sideP:"A clickable demo of the student app: pick interests, take a mission, ask the AI agent and earn GOOD points.",tips:["1 · Pick your interests","2 · Tap a card → JOIN","3 · Ask something in the “AI” tab","4 · See your level and GOOD DROP in Profile"],back:"← Website",
-    o1t:"Welcome to School 61!",o1p:"Every club, event and GOOD mission in one place.",o1b:"Get started",o2t:"What are you into?",o2p:"Pick at least 2 — AI will tailor picks for you.",o2b:"Continue",
-    hi:"Hi, Aziz 👋",grade:"Grade 7B",aiK:"AI · FOR YOU",aiBtn:"View",all:"All",missions:"GOOD missions",clubs:"Clubs & events",seeAll:"all",
-    tabs:["Feed","Missions","AI","Profile"],join:"JOIN",joined:"You're in ✓",pending:"Awaiting confirmation",confirmSim:"Simulate teacher confirmation",
-    when:"When",where:"Where",spots:"Spots",reward:"Reward",age:"Age",
-    myM:"My missions",openM:"Open missions",empty:"No missions yet — grab one from the feed!",
-    aiHello:"Hi! I'm the 61 GOOD AI agent. I'll find what fits your interests and schedule. What are we looking for?",
-    q:["What's on today after class?","I love drawing — where should I join?","How do I earn GOOD faster?"],
-    a:["Media Club today at 15:00 (Room 204) — 4 spots left. Robotics at 16:00. Want me to sign you up for Media Club? 📸","Art Studio is for you! Tue & Thu 14:30, Room 112. There's also the “Decor crew” mission: +30 GOOD 🎨","Team missions pay the most: “Eco Saturday” is +40 GOOD. Build a GOOD CREW with friends 🌱"],
-    lvl:"Level",next:"to next level",badges:["Active","Creator","Team","Leader"],goalT:"7B class goal: 2000 GOOD",goalP:"Hit it and a partner donates 50 books to the library 📚",drops:"GOOD DROP",left:"left",
-    toast:"added! Thank you 🙌",o1b:"🎒 I'm a student",o1x:"🧑‍🏫 I'm a teacher",o1p:"Tashkent, Yashnobod district. Every club, event and GOOD mission in one place.",grade:"School 61 · 7B",schT:"Our school",schA:"Aviasozlar-1, 78 · by Aviasozlar bazaar",schH:"Mon–Sat 8:00–17:00",schB:"Buses 30, 50, 110",call:"Call",map:"Map",tHi:"Hello, teacher 👋",tSub:"School 61 · Teacher panel",tNew:"New GOOD mission",tTitle:"What needs doing?",tTitleDef:"Decorate the hall for the holiday",tAge:"Age",tPeople:"How many students",tReward:"Reward",tPublish:"✨ Publish with AI",tAiPick:"AI found matching students",tWhy:["art, free on Fri", "media, 7B", "art, 11+", "ecology, active", "IT, recently joined"],tJoin:"tapped JOIN",tConfirm:"✓ Done",tConfirmed:"Confirmed",tDone:"All confirmed! Points sent to students 🎉",tRule:"AI never gives points — they're added only after you confirm.",tSwitch:"🎒 Student",tAgain:"Create another mission",tToast:"sent to student",interests:["Sports","IT","Art","Books","Media","Ecology","Music","Science"]}
-};
-const ITEMS=[
-  {id:"decor",type:"m",e:"🎨",c:"c-lime",cat:2,gp:30,spots:[2,5],age:"11+",
-    t:{uz:"Bezak jamoasi",ru:"Команда декора",en:"Decor crew"},
-    d:{uz:"Maktab bayramini bezashga 5 o‘quvchi kerak.",ru:"Нужны 5 учеников, чтобы оформить школьный праздник.",en:"5 students needed to decorate the school celebration."},
-    w:{uz:"Juma 15:00",ru:"Пт 15:00",en:"Fri 15:00"},p:{uz:"Aktlar zali",ru:"Актовый зал",en:"Assembly hall"}},
-  {id:"photo",type:"m",e:"📸",c:"c-sky",cat:4,gp:20,spots:[0,3],age:"12+",
-    t:{uz:"Foto-reportaj",ru:"Фоторепортаж",en:"Photo report"},
-    d:{uz:"Sport kunini suratga olib, maktab kanaliga tayyorlash.",ru:"Снять День спорта и подготовить пост для школьного канала.",en:"Shoot Sports Day and prep a post for the school channel."},
-    w:{uz:"Shanba 10:00",ru:"Сб 10:00",en:"Sat 10:00"},p:{uz:"Stadion",ru:"Стадион",en:"Stadium"}},
-  {id:"eco",type:"m",e:"🌱",c:"c-pink",cat:5,gp:40,spots:[6,10],age:"10+",crew:1,
-    t:{uz:"Eko-shanba · CREW",ru:"Эко-суббота · CREW",en:"Eco Saturday · CREW"},
-    d:{uz:"Maktab hovlisiga ko‘chat ekamiz. Do‘stlar bilan jamoa bo‘lib kel!",ru:"Сажаем деревья во дворе школы. Приходи командой с друзьями!",en:"Planting trees in the schoolyard. Come as a team with friends!"},
-    w:{uz:"Shanba 09:00",ru:"Сб 09:00",en:"Sat 09:00"},p:{uz:"Maktab hovlisi",ru:"Двор школы",en:"Schoolyard"}},
-  {id:"tutor",type:"m",e:"🧮",c:"c-sun",cat:1,gp:25,spots:[1,4],age:"13+",
-    t:{uz:"Kichiklarga yordam",ru:"Помощь младшим",en:"Help younger kids"},
-    d:{uz:"5-sinflarga informatika bo‘yicha yordam ber.",ru:"Помоги пятиклассникам с информатикой.",en:"Help 5th graders with computer science."},
-    w:{uz:"Chorshanba 14:00",ru:"Ср 14:00",en:"Wed 14:00"},p:{uz:"301-xona",ru:"Каб. 301",en:"Room 301"}},
-  {id:"media",type:"c",e:"🎬",c:"c-violet",cat:4,spots:[8,12],age:"11+",
-    t:{uz:"Media Club",ru:"Media Club",en:"Media Club"},
-    d:{uz:"Video, podkast va maktab yangiliklari. 4 ta joy qoldi!",ru:"Видео, подкасты и школьные новости. Осталось 4 места!",en:"Video, podcasts and school news. 4 spots left!"},
-    w:{uz:"Bugun 15:00",ru:"Сегодня 15:00",en:"Today 15:00"},p:{uz:"204-xona",ru:"Каб. 204",en:"Room 204"}},
-  {id:"robo",type:"c",e:"🤖",c:"c-sky",cat:1,spots:[10,14],age:"10+",
-    t:{uz:"Robototexnika",ru:"Робототехника",en:"Robotics"},
-    d:{uz:"Arduino va LEGO bilan robotlar yasaymiz.",ru:"Собираем роботов на Arduino и LEGO.",en:"Building robots with Arduino and LEGO."},
-    w:{uz:"Dush, Pay 16:00",ru:"Пн, Чт 16:00",en:"Mon, Thu 16:00"},p:{uz:"210-xona",ru:"Каб. 210",en:"Room 210"}},
-  {id:"art",type:"c",e:"🖌️",c:"c-pink",cat:2,spots:[9,15],age:"9+",
-    t:{uz:"Art Studio",ru:"Art Studio",en:"Art Studio"},
-    d:{uz:"Rasm, eskiz va devoriy rasmlar.",ru:"Рисунок, скетчинг и муралы.",en:"Drawing, sketching and murals."},
-    w:{uz:"Sesh, Pay 14:30",ru:"Вт, Чт 14:30",en:"Tue, Thu 14:30"},p:{uz:"112-xona",ru:"Каб. 112",en:"Room 112"}},
-  {id:"foot",type:"c",e:"⚽",c:"c-lime",cat:0,spots:[16,20],age:"10+",
-    t:{uz:"Futbol seksiyasi",ru:"Секция футбола",en:"Football team"},
-    d:{uz:"Maktablararo turnirga tayyorgarlik.",ru:"Готовимся к межшкольному турниру.",en:"Training for the inter-school cup."},
-    w:{uz:"Har kuni 17:00",ru:"Ежедневно 17:00",en:"Daily 17:00"},p:{uz:"Sport zal",ru:"Спортзал",en:"Gym"}}
-];
-const KIDS=[["🦊","Aziz K."],["🐼","Malika R."],["🐯","Javohir T."],["🦄","Sevara N."],["🐸","Diyor A."],["🐨","Kamola S."]];
-const X = {
-  ru:{loading:"Загрузка…",notgT:"Откройте в Telegram",notgP:"Эта версия работает внутри Telegram-бота школы. Пока можно посмотреть демо в браузере.",notgB:"Открыть демо",
+  ru:{o1t:"Добро пожаловать в школу №61!",o1p:"Ташкент, Яшнабадский район. Все кружки, события и GOOD-миссии — в одном месте.",o1b:"🎒 Я ученик",o1x:"🧑‍🏫 Я учитель",
+    o2t:"Что тебе интересно?",o2p:"Выбери хотя бы 2 — подберём миссии под тебя.",o2b:"Продолжить",interests:["Спорт","IT","Творчество","Книги","Медиа","Экология","Музыка","Наука"],
+    loading:"Загрузка…",notgT:"Откройте в Telegram",notgP:"Приложение работает внутри Telegram-бота школы @goodaiuz_bot.",notgB:"Открыть бота",
     admin:"🛡️ Панель администратора",sregT:"Регистрация ученика",sregP:"Займёт 20 секунд. После неё сразу откроется приложение.",fName:"Имя и фамилия",fGrade:"Класс",fLetter:"Буква",next:"Далее",
     tregT:"Регистрация учителя",tregP:"Укажите данные — администратор школы проверит их.",tNote:"🛡️ Панель учителя откроется только после подтверждения администратором. Так ученик не сможет зарегистрироваться под учителем.",fFio:"ФИО",fSubj:"Предмет",fSubjPh:"Например, математика",sendReq:"Отправить заявку",
     pendT:"Заявка на проверке",pendP:"Администратор школы проверит, что вы учитель школы №61. Как только подтвердит, бот пришлёт сообщение.",refresh:"Проверить статус",stillPend:"Пока ещё на проверке ⏳",
     rejT:"Заявка отклонена",rejP:"Администратор не подтвердил аккаунт учителя. Если это ошибка, обратитесь в администрацию школы.",asStudent:"Зарегистрироваться как ученик",
     errT:"Что-то пошло не так",errP:"Не удалось связаться с сервером. Попробуйте ещё раз.",retry:"Повторить",badForm:"Заполните все поля",
-    hiN:"Привет, {n} 👋",gradeN:"Школа №61 · {g}",tHiN:"Здравствуйте, {n} 👋",
-    admT:"Заявки учителей",admEmpty:"Новых заявок нет 🎉",approve:"✓ Да",reject:"✕",admBtn:"🛡️ Заявки",backB:"← Назад",okT:"Учитель одобрен ✓",noT:"Заявка отклонена"},
-  uz:{loading:"Yuklanmoqda…",notgT:"Telegram’da oching",notgP:"Bu versiya maktabning Telegram-boti ichida ishlaydi. Hozircha brauzerda demoni ko‘rishingiz mumkin.",notgB:"Demoni ochish",
+    hiN:"Привет, {n} 👋",gradeN:"Школа №61 · {g}",tHiN:"Здравствуйте, {n} 👋",tSub:"Школа №61 · Панель учителя",
+    admT:"Заявки учителей",admEmpty:"Новых заявок нет 🎉",approve:"✓ Да",reject:"✕",admBtn:"🛡️ Заявки",backB:"← Назад",okT:"Учитель одобрен ✓",noT:"Заявка отклонена",
+    tabs:["Лента","Мои","Профиль"],forYou:"ДЛЯ ТЕБЯ",view:"Смотреть",all:"Всё",missions:"GOOD-миссии",clubs:"Кружки и события",
+    noItems:"Пока нет открытых миссий. Учителя скоро добавят 🙌",join:"Записаться",joined:"Ты записан ✓",waitT:"Ждёт подтверждения учителя",full:"Мест нет",
+    when:"Когда",where:"Где",spots:"Места",reward:"Награда",age:"Возраст",by:"Учитель",myM:"Мои миссии",empty:"Пока ничего — выбери в ленте!",
+    lvl:"Уровень",next:"до следующего уровня",badges:["Актив","Креатор","Команда","Лидер"],classN:"Класс {g}",classP:"вместе набрали",histT:"Выполнено",noHist:"Пока нет выполненных миссий",
+    toast:"⚡ <b>+{p} GOOD</b>",joinedT:"Записан! Учитель получил уведомление ✓",
+    schT:"Наша школа",schA:"Авиасозлар-1, 78 · у рынка «Авиасозлар»",schH:"Пн–Сб 8:00–17:00",schB:"Автобусы 30, 50, 110",call:"Позвонить",map:"Карта",
+    tMine:"Мои миссии",tNew:"+ Новая",tNone:"Вы ещё ничего не опубликовали. Нажмите «+ Новая».",tType:["Миссия","Кружок"],tTitle:"Название",tTitlePh:"Оформить зал к празднику",tDesc:"Описание",tDescPh:"Что нужно сделать",
+    tCat:"Направление",tAge:"Возраст",tSpots:"Сколько учеников",tReward:"Награда",tWhen:"Когда",tWhenPh:"Пт 15:00",tWhere:"Где",tWherePh:"Актовый зал",tPublish:"Опубликовать",created:"Опубликовано ✓",
+    tNoKids:"Пока никто не записался",tConfirm:"✓ Выполнено",tConfirmed:"Подтверждено",tSigned:"записан",tClose:"Закрыть набор",tClosed:"Набор закрыт",closedT:"Набор закрыт",
+    tRule:"Баллы начисляются только после вашего подтверждения.",sentT:"Баллы начислены ✓"},
+  uz:{o1t:"61-maktabga xush kelibsan!",o1p:"Toshkent, Yashnobod tumani. Barcha to‘garaklar, tadbirlar va GOOD-missiyalar — bitta joyda.",o1b:"🎒 Men o‘quvchiman",o1x:"🧑‍🏫 Men o‘qituvchiman",
+    o2t:"Senga nima qiziq?",o2p:"Kamida 2 ta tanla — senga mos missiyalarni topamiz.",o2b:"Davom etish",interests:["Sport","IT","Ijod","Kitoblar","Media","Ekologiya","Musiqa","Fan"],
+    loading:"Yuklanmoqda…",notgT:"Telegram’da oching",notgP:"Ilova maktabning @goodaiuz_bot Telegram-boti ichida ishlaydi.",notgB:"Botni ochish",
     admin:"🛡️ Administrator paneli",sregT:"O‘quvchi ro‘yxatdan o‘tishi",sregP:"20 soniya vaqt oladi. Keyin ilova darhol ochiladi.",fName:"Ism va familiya",fGrade:"Sinf",fLetter:"Harf",next:"Keyingi",
     tregT:"O‘qituvchi ro‘yxatdan o‘tishi",tregP:"Ma’lumotlarni kiriting — maktab administratori tekshiradi.",tNote:"🛡️ O‘qituvchi paneli faqat administrator tasdiqlagandan keyin ochiladi. Shunda o‘quvchi o‘qituvchi nomidan ro‘yxatdan o‘ta olmaydi.",fFio:"F.I.Sh.",fSubj:"Fan",fSubjPh:"Masalan, matematika",sendReq:"Ariza yuborish",
     pendT:"Ariza tekshirilmoqda",pendP:"Maktab administratori siz 61-maktab o‘qituvchisi ekaningizni tekshiradi. Tasdiqlashi bilan bot xabar yuboradi.",refresh:"Holatni tekshirish",stillPend:"Hali tekshirilmoqda ⏳",
     rejT:"Ariza rad etildi",rejP:"Administrator o‘qituvchi akkauntini tasdiqlamadi. Xato bo‘lsa, maktab ma’muriyatiga murojaat qiling.",asStudent:"O‘quvchi sifatida ro‘yxatdan o‘tish",
     errT:"Nimadir xato ketdi",errP:"Server bilan bog‘lanib bo‘lmadi. Yana urinib ko‘ring.",retry:"Qayta urinish",badForm:"Barcha maydonlarni to‘ldiring",
-    hiN:"Salom, {n} 👋",gradeN:"61-maktab · {g}",tHiN:"Assalomu alaykum, {n} 👋",
-    admT:"O‘qituvchi arizalari",admEmpty:"Yangi arizalar yo‘q 🎉",approve:"✓ Ha",reject:"✕",admBtn:"🛡️ Arizalar",backB:"← Orqaga",okT:"O‘qituvchi tasdiqlandi ✓",noT:"Ariza rad etildi"},
-  en:{loading:"Loading…",notgT:"Open in Telegram",notgP:"This version runs inside the school’s Telegram bot. Meanwhile you can try the browser demo.",notgB:"Open demo",
+    hiN:"Salom, {n} 👋",gradeN:"61-maktab · {g}",tHiN:"Assalomu alaykum, {n} 👋",tSub:"61-maktab · O‘qituvchi paneli",
+    admT:"O‘qituvchi arizalari",admEmpty:"Yangi arizalar yo‘q 🎉",approve:"✓ Ha",reject:"✕",admBtn:"🛡️ Arizalar",backB:"← Orqaga",okT:"O‘qituvchi tasdiqlandi ✓",noT:"Ariza rad etildi",
+    tabs:["Lenta","Meniki","Profil"],forYou:"SEN UCHUN",view:"Ko‘rish",all:"Hammasi",missions:"GOOD-missiyalar",clubs:"To‘garaklar va tadbirlar",
+    noItems:"Hozircha ochiq missiyalar yo‘q. O‘qituvchilar tez orada qo‘shadi 🙌",join:"Yozilish",joined:"Yozilding ✓",waitT:"O‘qituvchi tasdig‘i kutilmoqda",full:"Joy yo‘q",
+    when:"Qachon",where:"Qayerda",spots:"Joylar",reward:"Mukofot",age:"Yosh",by:"O‘qituvchi",myM:"Mening missiyalarim",empty:"Hozircha hech narsa — lentadan tanla!",
+    lvl:"Daraja",next:"keyingi darajagacha",badges:["Faol","Ijodkor","Jamoa","Lider"],classN:"{g} sinf",classP:"birgalikda to‘pladi",histT:"Bajarilgan",noHist:"Hali bajarilgan missiya yo‘q",
+    toast:"⚡ <b>+{p} GOOD</b>",joinedT:"Yozilding! O‘qituvchiga xabar ketdi ✓",
+    schT:"Bizning maktab",schA:"Aviasozlar-1, 78 · «Aviasozlar» bozori yonida",schH:"Dush–Shan 8:00–17:00",schB:"Avtobus 30, 50, 110",call:"Qo‘ng‘iroq",map:"Xarita",
+    tMine:"Mening missiyalarim",tNew:"+ Yangi",tNone:"Hali hech narsa e’lon qilmadingiz. «+ Yangi» ni bosing.",tType:["Missiya","To‘garak"],tTitle:"Nomi",tTitlePh:"Bayram uchun zalni bezash",tDesc:"Tavsif",tDescPh:"Nima qilish kerak",
+    tCat:"Yo‘nalish",tAge:"Yosh",tSpots:"Nechta o‘quvchi",tReward:"Mukofot",tWhen:"Qachon",tWhenPh:"Juma 15:00",tWhere:"Qayerda",tWherePh:"Aktlar zali",tPublish:"E’lon qilish",created:"E’lon qilindi ✓",
+    tNoKids:"Hali hech kim yozilmadi",tConfirm:"✓ Bajarildi",tConfirmed:"Tasdiqlandi",tSigned:"yozildi",tClose:"Yozilishni yopish",tClosed:"Yozilish yopilgan",closedT:"Yozilish yopildi",
+    tRule:"Ballar faqat siz tasdiqlaganingizdan keyin tushadi.",sentT:"Ballar tushdi ✓"},
+  en:{o1t:"Welcome to School 61!",o1p:"Tashkent, Yashnobod district. Every club, event and GOOD mission in one place.",o1b:"🎒 I'm a student",o1x:"🧑‍🏫 I'm a teacher",
+    o2t:"What are you into?",o2p:"Pick at least 2 — we'll match missions to you.",o2b:"Continue",interests:["Sports","IT","Art","Books","Media","Ecology","Music","Science"],
+    loading:"Loading…",notgT:"Open in Telegram",notgP:"The app runs inside the school’s Telegram bot @goodaiuz_bot.",notgB:"Open the bot",
     admin:"🛡️ Admin panel",sregT:"Student sign-up",sregP:"Takes 20 seconds. The app opens right after.",fName:"First and last name",fGrade:"Grade",fLetter:"Letter",next:"Next",
     tregT:"Teacher sign-up",tregP:"Enter your details — the school administrator will check them.",tNote:"🛡️ The teacher panel opens only after an administrator approves you, so students can’t sign up as teachers.",fFio:"Full name",fSubj:"Subject",fSubjPh:"e.g. Maths",sendReq:"Send request",
     pendT:"Request under review",pendP:"The school administrator will check that you teach at School 61. The bot will message you once approved.",refresh:"Check status",stillPend:"Still under review ⏳",
     rejT:"Request declined",rejP:"The administrator didn’t approve the teacher account. If this is a mistake, contact the school office.",asStudent:"Sign up as a student",
     errT:"Something went wrong",errP:"Couldn’t reach the server. Please try again.",retry:"Retry",badForm:"Please fill in every field",
-    hiN:"Hi, {n} 👋",gradeN:"School 61 · {g}",tHiN:"Hello, {n} 👋",
-    admT:"Teacher requests",admEmpty:"No new requests 🎉",approve:"✓ Yes",reject:"✕",admBtn:"🛡️ Requests",backB:"← Back",okT:"Teacher approved ✓",noT:"Request declined"}
+    hiN:"Hi, {n} 👋",gradeN:"School 61 · {g}",tHiN:"Hello, {n} 👋",tSub:"School 61 · Teacher panel",
+    admT:"Teacher requests",admEmpty:"No new requests 🎉",approve:"✓ Yes",reject:"✕",admBtn:"🛡️ Requests",backB:"← Back",okT:"Teacher approved ✓",noT:"Request declined",
+    tabs:["Feed","Mine","Profile"],forYou:"FOR YOU",view:"View",all:"All",missions:"GOOD missions",clubs:"Clubs & events",
+    noItems:"No open missions yet. Teachers will add some soon 🙌",join:"Sign up",joined:"You're in ✓",waitT:"Waiting for the teacher to confirm",full:"No spots left",
+    when:"When",where:"Where",spots:"Spots",reward:"Reward",age:"Age",by:"Teacher",myM:"My missions",empty:"Nothing yet — pick one from the feed!",
+    lvl:"Level",next:"to next level",badges:["Active","Creator","Team","Leader"],classN:"Class {g}",classP:"earned together",histT:"Completed",noHist:"No completed missions yet",
+    toast:"⚡ <b>+{p} GOOD</b>",joinedT:"You're in! The teacher was notified ✓",
+    schT:"Our school",schA:"Aviasozlar-1, 78 · by Aviasozlar bazaar",schH:"Mon–Sat 8:00–17:00",schB:"Buses 30, 50, 110",call:"Call",map:"Map",
+    tMine:"My missions",tNew:"+ New",tNone:"You haven’t published anything yet. Tap “+ New”.",tType:["Mission","Club"],tTitle:"Title",tTitlePh:"Decorate the hall for the holiday",tDesc:"Description",tDescPh:"What needs doing",
+    tCat:"Category",tAge:"Age",tSpots:"How many students",tReward:"Reward",tWhen:"When",tWhenPh:"Fri 15:00",tWhere:"Where",tWherePh:"Assembly hall",tPublish:"Publish",created:"Published ✓",
+    tNoKids:"Nobody has signed up yet",tConfirm:"✓ Done",tConfirmed:"Confirmed",tSigned:"signed up",tClose:"Close sign-ups",tClosed:"Sign-ups closed",closedT:"Sign-ups closed",
+    tRule:"Points are added only after you confirm.",sentT:"Points sent ✓"}
 };
-for (const l in X) Object.assign(T[l], X[l]);
 const INT_E=["⚽","💻","🎨","📚","📸","🌱","🎧","🔬"];
+const COLORS=["c-lime","c-sky","c-pink","c-sun","c-violet","c-lime","c-violet","c-sky"];
 const CATS=[0,1,2,4,5];
 const LETTERS="АБВГДЕЖЗИК".split("");
+const AGES=["7+","10+","11+","12+","14+"],GPS=[10,20,30,40,50];
+const BOT="https://t.me/goodaiuz_bot";
 
 const tg = window.Telegram && Telegram.WebApp;
 const INIT = tg && tg.initData || "";
 const TGU = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
-// scr: current full-screen step (null = main app); me: registration from the server
-const S={lang:"ru",scr:"loading",me:null,admin:false,pending:[],adminOpen:false,form:{name:[TGU.first_name,TGU.last_name].filter(Boolean).join(" "),grade:"",letter:"",subject:""},err:"",
-  tab:0,filter:-1,ints:new Set(),joined:{},points:240,chat:[],tm:{stage:0,age:1,n:5,gp:2,ok:new Set()}};
+// scr: current full-screen step (null = main app); me: registration from the server; data: missions from the server
+const S={lang:"ru",scr:"loading",me:null,admin:false,pending:[],adminOpen:false,data:null,
+  form:{name:[TGU.first_name,TGU.last_name].filter(Boolean).join(" "),grade:"",letter:"",subject:""},err:"",
+  tab:0,filter:-1,ints:new Set(),tview:"list",nm:{type:"m",title:"",desc:"",cat:2,age:"10+",spots:5,gp:20,when:"",where:""}};
 try{const q=new URLSearchParams(location.search).get("lang")||localStorage.getItem("lang")||(TGU.language_code||"").slice(0,2);if(T[q])S.lang=q}catch(e){}
 const $=id=>document.getElementById(id);
 const L=()=>T[S.lang];
-const tx=o=>o[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(s,o)=>s.replace(/\{(\w)\}/g,(_,k)=>esc(o[k]));
 const haptic=t=>{try{tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
+const tick=()=>{try{tg.HapticFeedback.selectionChanged()}catch(e){}};
 
 async function api(path,body={}){
   const r=await fetch("/api/"+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:INIT,...body})});
@@ -310,22 +273,30 @@ function applyMe(r){
   if(!u)S.scr="role";
   else if(u.role==="teacher"&&u.status==="pending")S.scr="pending";
   else if(u.role==="teacher"&&u.status==="rejected")S.scr="rejected";
-  else{S.scr=null;if(u.role==="student")S.ints=new Set(u.interests)}
+  else{S.scr=null;if(u.role==="student")S.ints=new Set(u.interests);load()}
   paint();
 }
-// Back button: steps inside the sign-up flow, the admin list, and the bottom sheet.
+// Missions, sign-ups and points for the current user; every action returns the fresh state.
+async function load(action,extra){
+  const r=await api("missions",{action:action||"list",...extra}).catch(()=>({}));
+  if(r.items||r.mine){S.data=r;render()}
+  return r;
+}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.me&&!S.scr)load()});
+
+// Back button: steps inside the sign-up flow, the admin list, the new-mission form and the bottom sheet.
 const BACK={sreg:"role",treg:"role",ints:"sreg"};
 function goBack(){
   if($("sheet").classList.contains("on"))return closeSheet();
   if(S.adminOpen){S.adminOpen=false;return paint()}
+  if(!S.scr&&S.tview==="new"){S.tview="list";return paint()}
   if(S.scr==="sreg"&&S.me&&S.me.status==="rejected"){S.scr="rejected";return paint()}
   if(BACK[S.scr]){S.scr=BACK[S.scr];S.err="";paint()}
 }
-function syncBack(){if(!tg)return;const on=$("sheet").classList.contains("on")||S.adminOpen||!!BACK[S.scr];on?tg.BackButton.show():tg.BackButton.hide()}
+function syncBack(){if(!tg)return;const on=$("sheet").classList.contains("on")||S.adminOpen||!!BACK[S.scr]||(!S.scr&&S.tview==="new");on?tg.BackButton.show():tg.BackButton.hide()}
 
 function setLang(l){S.lang=l;try{localStorage.setItem("lang",l)}catch(e){}document.documentElement.lang=l;
   document.querySelectorAll("[data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l===l));
-  if(S.chat.length===0)S.chat=[{bot:1,k:"hello"}];
   closeSheet();paint();
 }
 document.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
@@ -339,7 +310,7 @@ const opts=(arr,sel,ph)=>`<option value="" disabled ${sel?"":"selected"}>${ph}</
 function screen(t){const f=S.form,err=`<div class="err" id="err">${esc(S.err)}</div>`;
   switch(S.scr){
   case "loading":return `<div class="center"><div class="spin"></div><p style="margin-top:16px">${t.loading}</p></div>`;
-  case "notg":return `<div class="center"><div class="em">📱</div><h2>${t.notgT}</h2><p>${t.notgP}</p></div><a class="big lime" style="display:block;text-align:center;text-decoration:none" href="app.html?lang=${S.lang}">${t.notgB}</a>`;
+  case "notg":return `<div class="center"><div class="em">📱</div><h2>${t.notgT}</h2><p>${t.notgP}</p></div><a class="big lime" style="display:block;text-align:center;text-decoration:none" href="${BOT}">${t.notgB}</a>`;
   case "error":return `<div class="center"><div class="em">⚠️</div><h2>${t.errT}</h2><p>${t.errP}</p></div><button class="big lime" data-go="retry">${t.retry}</button>`;
   case "role":return `<div class="hero-art"><div class="orb"><span>61</span></div></div><h2>${t.o1t}</h2><p>${t.o1p}</p>
     <button class="big lime" data-go="sreg">${t.o1b}</button><button class="big" style="margin-top:10px" data-go="treg">${t.o1x}</button>
@@ -371,7 +342,7 @@ function fail(msg){S.err=msg;const e=$("err");if(e)e.textContent=msg;haptic("err
 function bindScreen(){
   const ints=$("ints");
   if(ints)ints.onclick=e=>{const b=e.target.closest(".int");if(!b)return;const i=+b.dataset.i;S.ints.has(i)?S.ints.delete(i):S.ints.add(i);b.classList.toggle("on");
-    document.querySelector('[data-go="sdone"]').disabled=S.ints.size<2;try{tg.HapticFeedback.selectionChanged()}catch(e){}};
+    document.querySelector('[data-go="sdone"]').disabled=S.ints.size<2;tick()};
   $("scr").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go,b));
 }
 async function go(to,btn){const t=L(),f=S.form;readForm();S.err="";
@@ -394,101 +365,113 @@ async function decide(id,approve){const t=L();const r=await api("admin",{id,appr
   if(r.pending){S.pending=r.pending;haptic("success");toast(approve?t.okT:t.noT)}render()}
 function renderAdmin(t,v){
   v.innerHTML=`<div class="top"><div><small>61 GOOD AI</small><h2>${t.admT}</h2></div><button class="gp" id="admX">${t.backB}</button></div>
-  <div class="tcard adm">${S.pending.length?S.pending.map(p=>`<div class="kid"><span class="ka">🧑‍🏫</span><div><b>${esc(p.name)}</b><small>${esc(p.subject)}${p.username?" · @"+esc(p.username):""} · ID ${p.id}</small></div>
-    <div class="acts"><button data-ap="${p.id}">${t.approve}</button><button class="no" data-rj="${p.id}">${t.reject}</button></div></div>`).join(""):`<p style="color:var(--muted);font-weight:700">${t.admEmpty}</p>`}</div>`;
+  <div class="tcard adm">${S.pending.length?S.pending.map(p=>`<div class="kid"><span class="ka">🧑‍🏫</span><div><b>${esc(p.name)}</b><small>${esc(p.subject)}${p.username?" · @"+esc(p.username):""} · ID ${esc(p.id)}</small></div>
+    <div class="acts"><button data-ap="${esc(p.id)}">${t.approve}</button><button class="no" data-rj="${esc(p.id)}">${t.reject}</button></div></div>`).join(""):`<p class="muted">${t.admEmpty}</p>`}</div>`;
   $("admX").onclick=goBack;
   v.querySelectorAll("[data-ap]").forEach(b=>b.onclick=()=>{b.disabled=true;decide(b.dataset.ap,true)});
   v.querySelectorAll("[data-rj]").forEach(b=>b.onclick=()=>{b.disabled=true;decide(b.dataset.rj,false)});
 }
 
-function itemRow(it){const t=L(),j=S.joined[it.id];
-  let tag=it.type==="m"?`+${it.gp}`:t.join;let cls=it.type==="m"?"":"club";
-  if(j==="done"){tag="✓ +"+it.gp;cls="done"}else if(j){tag="✓";cls="done"}
-  const sp=it.spots[0]+(j&&j!=="done"?1:0);
-  return `<button class="item" data-id="${it.id}"><div class="ic ${it.c}">${it.e}</div><div><b>${tx(it.t)}</b><span class="meta">${tx(it.w)} · ${sp}/${it.spots[1]}</span><div class="bar"><i style="width:${sp/it.spots[1]*100}%"></i></div></div><span class="tag ${cls}">${tag}</span></button>`}
+const items=()=>(S.data&&S.data.items)||[];
+const full=it=>it.count>=it.spots;
+function itemRow(it){const t=L();
+  let tag=it.type==="m"?`+${it.gp}`:t.join,cls=it.type==="m"?"":"club";
+  if(it.my==="done"){tag="✓ +"+it.gp;cls="done"}else if(it.my){tag="✓";cls="done"}else if(full(it)||it.status!=="open"){tag="—";cls="club"}
+  return `<button class="item" data-id="${esc(it.id)}"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><span class="meta">${esc(it.when)} · ${it.count}/${it.spots}</span><div class="bar"><i style="width:${Math.min(100,it.count/it.spots*100)}%"></i></div></div><span class="tag ${cls}">${tag}</span></button>`}
 
 function render(){const t=L(),v=$("view"),u=S.me;
   const showApp=S.adminOpen||(!S.scr&&u);
   v.style.display=showApp?"":"none";
   $("tabs").style.display=showApp&&!S.adminOpen&&u.role==="student"?"":"none";
   if(!showApp)return;
-  if(S.adminOpen){renderAdmin(t,v);return}
-  if(u.role==="teacher"){renderTeacher(t,v);return}
-  $("tabs").innerHTML=["🏠","🎯","✨","😎"].map((e,i)=>`<button class="${S.tab===i?"on":""}" data-t="${i}"><span class="e">${e}</span>${t.tabs[i]}</button>`).join("");
-  const first=u.name.split(" ")[0];
-  const top=`<div class="top"><div><small>${fmt(t.gradeN,{g:u.grade})}</small><h2>${fmt(t.hiN,{n:first})}</h2></div><span class="gp">⚡ ${S.points} GOOD</span></div>`;
+  if(S.adminOpen)return renderAdmin(t,v);
+  if(u.role==="teacher")return renderTeacher(t,v);
+  if(!S.data){v.innerHTML=`<div class="center" style="padding-top:120px"><div class="spin"></div></div>`;return}
+  $("tabs").innerHTML=["🏠","🎯","😎"].map((e,i)=>`<button class="${S.tab===i?"on":""}" data-t="${i}"><span class="e">${e}</span>${t.tabs[i]}</button>`).join("");
+  const pts=S.data.points;
+  const top=`<div class="top"><div><small>${fmt(t.gradeN,{g:u.grade})}</small><h2>${fmt(t.hiN,{n:u.name.split(" ")[0]})}</h2></div><span class="gp">⚡ ${pts} GOOD</span></div>`;
+  const open=items().filter(it=>it.status==="open");
   if(S.tab===0){
     const pass=it=>S.filter<0||it.cat===S.filter;
-    const pref=ITEMS.filter(it=>S.ints.has(it.cat));const pick=(pref[0]||ITEMS[4]);
-    const ms=ITEMS.filter(it=>it.type==="m"&&pass(it)).sort((a,b)=>S.ints.has(b.cat)-S.ints.has(a.cat));
-    const cs=ITEMS.filter(it=>it.type==="c"&&pass(it)).sort((a,b)=>S.ints.has(b.cat)-S.ints.has(a.cat));
-    v.innerHTML=top+`<div class="ai"><small>${t.aiK}</small><p>${tx(pick.t)} — ${tx(pick.w)}</p><button data-id="${pick.id}">${t.aiBtn} →</button></div>
-    <div class="filters"><button class="${S.filter<0?"on":""}" data-f="-1">🔥 ${t.all}</button>${CATS.map(i=>`<button class="${S.filter===i?"on":""}" data-f="${i}">${INT_E[i]} ${t.interests[i]}</button>`).join("")}</div>
+    const byInt=(a,b)=>S.ints.has(b.cat)-S.ints.has(a.cat);
+    const pick=open.find(it=>S.ints.has(it.cat)&&!it.my&&!full(it));
+    const ms=open.filter(it=>it.type==="m"&&pass(it)).sort(byInt),cs=open.filter(it=>it.type==="c"&&pass(it)).sort(byInt);
+    v.innerHTML=top+(pick?`<div class="ai"><small>${t.forYou}</small><p>${esc(pick.title)} — ${esc(pick.when)}</p><button data-id="${esc(pick.id)}">${t.view} →</button></div>`:"")+
+    `<div class="filters"><button class="${S.filter<0?"on":""}" data-f="-1">🔥 ${t.all}</button>${CATS.map(i=>`<button class="${S.filter===i?"on":""}" data-f="${i}">${INT_E[i]} ${t.interests[i]}</button>`).join("")}</div>
     ${ms.length?`<div class="sec-t"><h3>${t.missions}</h3><small>${ms.length}</small></div>`+ms.map(itemRow).join(""):""}
     ${cs.length?`<div class="sec-t"><h3>${t.clubs}</h3><small>${cs.length}</small></div>`+cs.map(itemRow).join(""):""}
+    ${!ms.length&&!cs.length?`<p class="muted">${t.noItems}</p>`:""}
     <div class="school"><b>🏫 ${t.schT}</b><p>📍 ${t.schA}<br>🕗 ${t.schH}<br>🚌 ${t.schB}</p><div class="row2"><a href="tel:+998712974982">📞 ${t.call}</a><a target="_blank" rel="noopener" href="https://2gis.uz/tashkent/firm/70000001036679067">🗺️ ${t.map}</a></div></div>`;
   } else if(S.tab===1){
-    const mine=ITEMS.filter(it=>S.joined[it.id]),open=ITEMS.filter(it=>it.type==="m"&&!S.joined[it.id]);
-    v.innerHTML=top+`<div class="sec-t"><h3>${t.myM}</h3></div>`+(mine.length?mine.map(itemRow).join(""):`<p style="color:var(--muted);font-weight:700;margin-bottom:16px">${t.empty}</p>`)+
-      (open.length?`<div class="sec-t"><h3>${t.openM}</h3></div>`+open.map(itemRow).join(""):"");
-  } else if(S.tab===2){
-    v.innerHTML=`<div class="top"><div><small>61 GOOD</small><h2>AI ✨</h2></div><span class="gp">⚡ ${S.points}</span></div><div class="chat">`+
-      S.chat.map(m=>m.typing?`<div class="msg bot"><span class="typing"><i></i><i></i><i></i></span></div>`:`<div class="msg ${m.bot?"bot":"me"}">${m.k==="hello"?t.aiHello:m.bot?t.a[m.k]:t.q[m.k]}</div>`).join("")+
-      `<div class="sugs">${t.q.map((q,i)=>`<button data-q="${i}">${q}</button>`).join("")}</div></div>`;
-    v.scrollTop=v.scrollHeight;
+    const mine=items().filter(it=>it.my);
+    v.innerHTML=top+`<div class="sec-t"><h3>${t.myM}</h3></div>`+(mine.length?mine.map(itemRow).join(""):`<p class="muted">${t.empty}</p>`);
   } else {
-    const lvl=Math.floor(S.points/100),pr=S.points%100;const nd=Object.values(S.joined).filter(x=>x==="done").length;
-    const drops=[["🧢",{uz:"Maktab kepkasi",ru:"Кепка школы",en:"School cap"},150,7],["🎟️",{uz:"Master-klass",ru:"Мастер-класс",en:"Workshop"},200,3],["📕",{uz:"Kitob sovg‘asi",ru:"Книга в подарок",en:"Gift book"},120,10],["🏅",{uz:"Oltin nishon",ru:"Золотой бейдж",en:"Gold badge"},300,1]];
+    const lvl=Math.floor(pts/100),pr=pts%100,done=items().filter(it=>it.my==="done");
     const photo=TGU.photo_url&&/^https:\/\//.test(TGU.photo_url)?`<img src="${esc(TGU.photo_url)}" alt="" style="width:100%;height:100%;border-radius:30px;object-fit:cover">`:"🦊";
-    v.innerHTML=`<div class="pf"><div class="av">${photo}</div><h2>${esc(u.name)}</h2><small style="color:var(--muted);font-weight:700">${fmt(t.gradeN,{g:u.grade})} · ${S.ints.size?[...S.ints].map(i=>INT_E[i]).join(" "):"🎨 📸"}</small></div>
+    v.innerHTML=`<div class="pf"><div class="av">${photo}</div><h2>${esc(u.name)}</h2><small style="color:var(--muted);font-weight:700">${fmt(t.gradeN,{g:u.grade})} · ${[...S.ints].map(i=>INT_E[i]).join(" ")}</small></div>
     <div class="lvl"><div class="row">${t.lvl} ${lvl} <span>${pr}/100</span></div><div class="bar"><i style="width:${pr}%"></i></div><small style="opacity:.6;font-weight:700;font-size:11px">${100-pr} GOOD ${t.next}</small></div>
-    <div class="badges">${["🔥","🎨","👯","👑"].map((e,i)=>`<div class="${i>1+nd?"off":""}">${e}<small>${t.badges[i]}</small></div>`).join("")}</div>
-    <div class="goal"><b>${t.goalT}</b><p>${t.goalP}</p><div class="bar"><i style="width:${Math.min(100,(1380+S.points)/20)}%"></i></div></div>
-    <div class="sec-t"><h3>${t.drops}</h3></div><div class="drops">${drops.map(d=>`<div class="drop"><div class="e">${d[0]}</div><b>${tx(d[1])}</b><span>⚡ ${d[2]}</span><div class="lim">${d[3]} ${t.left}</div></div>`).join("")}</div>`;
+    <div class="badges">${["🔥","🎨","👯","👑"].map((e,i)=>`<div class="${done.length<[1,3,5,10][i]?"off":""}">${e}<small>${t.badges[i]}</small></div>`).join("")}</div>
+    <div class="goal"><b>${fmt(t.classN,{g:u.grade})}: ⚡ ${S.data.classPoints} GOOD</b><p>${t.classP}</p></div>
+    <div class="sec-t"><h3>${t.histT}</h3></div>${done.length?done.map(itemRow).join(""):`<p class="muted">${t.noHist}</p>`}`;
   }
 }
-$("tabs").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;S.tab=+b.dataset.t;try{tg.HapticFeedback.selectionChanged()}catch(e){}render();$("view").scrollTop=S.tab===2?$("view").scrollHeight:0};
+$("tabs").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;S.tab=+b.dataset.t;tick();render();$("view").scrollTop=0};
 $("view").onclick=e=>{if(!S.me||S.me.role!=="student"||S.adminOpen)return;
   const f=e.target.closest("[data-f]");if(f){S.filter=+f.dataset.f;render();return}
-  const q=e.target.closest("[data-q]");if(q){ask(+q.dataset.q);return}
   const it=e.target.closest("[data-id]");if(it)openSheet(it.dataset.id);
 };
-function ask(i){S.chat.push({k:i},{typing:1});render();setTimeout(()=>{S.chat.pop();S.chat.push({bot:1,k:i});render()},900)}
 
-function openSheet(id){const it=ITEMS.find(x=>x.id===id),t=L(),j=S.joined[id];
-  $("sheet").innerHTML=`<div class="grab"></div><div class="ic ${it.c}">${it.e}</div><h2>${tx(it.t)}</h2><p>${tx(it.d)}</p>
-  <div class="facts"><div>${t.when}<b>${tx(it.w)}</b></div><div>${t.where}<b>${tx(it.p)}</b></div><div>${t.spots}<b>${it.spots[0]+(j&&j!=="done"?1:0)} / ${it.spots[1]}</b></div><div>${it.type==="m"?t.reward:t.age}<b>${it.type==="m"?"⚡ +"+it.gp+" GOOD":it.age}</b></div></div>
-  ${!j?`<button class="big lime" id="joinB">${t.join}</button>`:j==="done"?`<button class="big" disabled>✓ +${it.gp} GOOD</button>`:
-    `<button class="big" disabled>${it.type==="m"?t.pending:t.joined}</button>`}`;
+function openSheet(id){const it=items().find(x=>x.id===id),t=L();if(!it)return;
+  const btn=it.my==="done"?`<button class="big" disabled>✓ +${it.gp} GOOD</button>`:it.my?`<button class="big" disabled>${it.type==="m"?t.waitT:t.joined}</button>`:
+    it.status!=="open"?`<button class="big" disabled>${t.tClosed}</button>`:full(it)?`<button class="big" disabled>${t.full}</button>`:`<button class="big lime" id="joinB">${t.join}</button>`;
+  $("sheet").innerHTML=`<div class="grab"></div><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><h2>${esc(it.title)}</h2><p>${esc(it.desc)}</p>
+  <div class="facts"><div>${t.when}<b>${esc(it.when)}</b></div><div>${t.where}<b>${esc(it.where)}</b></div><div>${t.spots}<b>${it.count} / ${it.spots}</b></div><div>${it.type==="m"?t.reward:t.age}<b>${it.type==="m"?"⚡ +"+it.gp+" GOOD":esc(it.age)}</b></div>
+  <div style="grid-column:1/-1">${t.by}<b>${esc(it.author)}</b></div></div>${btn}`;
   $("scrim").classList.add("on");$("sheet").classList.add("on");syncBack();
-  const jb=$("joinB");if(jb)jb.onclick=()=>{S.joined[id]=true;haptic("success");render();openSheet(id)};
+  const jb=$("joinB");if(jb)jb.onclick=async()=>{jb.disabled=true;const r=await load("join",{id});
+    if(r.ok){haptic("success");toast(t.joinedT);openSheet(id)}else{haptic("error");toast(r.error==="full"?t.full:t.errP);openSheet(id)}};
 }
 
-function renderTeacher(t,v){const m=S.tm,ages=["10+","11+","12+","14+"],gps=[10,20,30,40];
-  let h=`<div class="top"><div><small>${t.tSub}</small><h2>${fmt(t.tHiN,{n:S.me.name.split(" ")[0]})}</h2></div>${S.admin?`<button class="gp" id="toA">${t.admBtn}</button>`:""}</div>`;
-  if(m.stage===0){
-    h+=`<div class="tcard"><h3>${t.tNew}</h3>
-      <label>${t.tTitle}</label><div class="inp">🎨 ${t.tTitleDef}</div>
-      <label>${t.tAge}</label><div class="seg">${ages.map((a,i)=>`<button data-age="${i}" class="${m.age===i?"on":""}">${a}</button>`).join("")}</div>
-      <label>${t.tPeople}</label><div class="step"><button data-n="-1">−</button><b>${m.n}</b><button data-n="1">+</button></div>
-      <label>${t.tReward}</label><div class="seg">${gps.map((g,i)=>`<button data-gp="${i}" class="${m.gp===i?"on":""}">+${g}</button>`).join("")}</div>
-      <button class="big lime" id="pub" style="margin-top:18px">${t.tPublish}</button></div><p class="rule">🛡️ ${t.tRule}</p>`;
-  } else if(m.stage===1){
-    h+=`<div class="tcard"><h3>${t.tAiPick}</h3><div class="msg bot" style="max-width:none"><span class="typing"><i></i><i></i><i></i></span></div></div>`;
-  } else {
-    const gp=gps[m.gp],kids=KIDS.slice(0,m.n);
-    h+=`<div class="tcard"><small class="tt">🎨 ${t.tTitleDef} · ${ages[m.age]} · +${gp} GOOD</small><h3>✨ ${t.tAiPick}</h3>`+
-      kids.map((k,i)=>{const ok=m.ok.has(i);return `<div class="kid"><span class="ka">${k[0]}</span><div><b>${k[1]}</b><small>${t.tWhy[i%5]} · ${t.tJoin}</small></div>${ok?`<span class="tag done">${t.tConfirmed}</span>`:`<button class="okb" data-ok="${i}">${t.tConfirm}</button>`}</div>`}).join("")+`</div>`;
-    h+=m.ok.size===kids.length?`<p class="rule" style="color:var(--ink)">${t.tDone}</p><button class="big" id="again">${t.tAgain}</button>`:`<p class="rule">🛡️ ${t.tRule}</p>`;
+function renderTeacher(t,v){const m=S.nm,mine=(S.data&&S.data.mine)||[];
+  let h=`<div class="top"><div><small>${t.tSub}</small><h2>${fmt(t.tHiN,{n:S.me.name.split(" ")[0]})}</h2></div>${S.admin?`<button class="gp" id="toA">${t.admBtn}</button>`:""}</div>
+  <div class="seg" style="margin-bottom:14px"><button data-tv="list" class="${S.tview==="list"?"on":""}">${t.tMine}</button><button data-tv="new" class="${S.tview==="new"?"on":""}">${t.tNew}</button></div>`;
+  if(S.tview==="new"){
+    h+=`<div class="tcard">
+      <div class="seg">${t.tType.map((n,i)=>`<button data-ty="${"mc"[i]}" class="${m.type==="mc"[i]?"on":""}">${n}</button>`).join("")}</div>
+      <label class="flbl">${t.tTitle}</label><input class="fld" id="nTitle" maxlength="80" placeholder="${t.tTitlePh}" value="${esc(m.title)}">
+      <label class="flbl">${t.tDesc}</label><textarea class="fld" id="nDesc" maxlength="400" placeholder="${t.tDescPh}">${esc(m.desc)}</textarea>
+      <label class="flbl">${t.tCat}</label><div class="cats">${t.interests.map((n,i)=>`<button data-cat="${i}" class="${m.cat===i?"on":""}">${INT_E[i]} ${n}</button>`).join("")}</div>
+      <div class="frow"><div><label class="flbl">${t.tWhen}</label><input class="fld" id="nWhen" maxlength="40" placeholder="${t.tWhenPh}" value="${esc(m.when)}"></div>
+      <div><label class="flbl">${t.tWhere}</label><input class="fld" id="nWhere" maxlength="40" placeholder="${t.tWherePh}" value="${esc(m.where)}"></div></div>
+      <label class="flbl">${t.tAge}</label><div class="seg">${AGES.map(a=>`<button data-age="${a}" class="${m.age===a?"on":""}">${a}</button>`).join("")}</div>
+      <label class="flbl">${t.tSpots}</label><div class="step"><button data-n="-1">−</button><b>${m.spots}</b><button data-n="1">+</button></div>
+      ${m.type==="m"?`<label class="flbl">${t.tReward}</label><div class="seg">${GPS.map(g=>`<button data-gp="${g}" class="${m.gp===g?"on":""}">+${g}</button>`).join("")}</div>`:""}
+      <div class="err" id="err"></div><button class="big lime" id="pub">${t.tPublish}</button></div><p class="rule">🛡️ ${t.tRule}</p>`;
+  } else if(!S.data){h+=`<div class="spin" style="margin-top:40px"></div>`}
+  else if(!mine.length){h+=`<p class="muted">${t.tNone}</p>`}
+  else{
+    h+=mine.map(it=>`<div class="tcard"><div class="hd"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><div class="meta">${esc(it.when)} · ${esc(it.where)} · ${it.count}/${it.spots}${it.type==="m"?" · +"+it.gp+" GOOD":""}</div></div></div>`+
+      (it.kids.length?it.kids.map(k=>`<div class="kid"><span class="ka">🎒</span><div><b>${esc(k.name)}</b><small>${esc(k.grade)} · ${t.tSigned}</small></div>${
+        it.type!=="m"?"":k.state==="done"?`<span class="tag done">${t.tConfirmed}</span>`:`<button class="okb" data-ok="${esc(it.id)}" data-st="${esc(k.id)}">${t.tConfirm}</button>`}</div>`).join(""):`<p class="meta" style="margin-top:8px">${t.tNoKids}</p>`)+
+      (it.status==="open"?`<button class="lnk" data-close="${esc(it.id)}">${t.tClose}</button>`:`<p class="meta" style="margin-top:10px">🔒 ${t.tClosed}</p>`)+`</div>`).join("");
   }
   v.innerHTML=h;
   const ta=$("toA");if(ta)ta.onclick=openAdmin;
-  v.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{m.age=+b.dataset.age;render()});
-  v.querySelectorAll("[data-gp]").forEach(b=>b.onclick=()=>{m.gp=+b.dataset.gp;render()});
-  v.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{m.n=Math.max(1,Math.min(6,m.n+ +b.dataset.n));render()});
-  const pb=$("pub");if(pb)pb.onclick=()=>{m.stage=1;render();setTimeout(()=>{m.stage=2;render()},1200)};
-  v.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>{const i=+b.dataset.ok;m.ok.add(i);haptic("success");render();toast(`⚡ <b>+${gps[m.gp]} GOOD</b> ${KIDS[i][1]}`)});
-  const ag=$("again");if(ag)ag.onclick=()=>{m.stage=0;m.ok=new Set();render()};
+  const keep=()=>{const g=id=>$(id)?$(id).value:"";if($("nTitle")){m.title=g("nTitle");m.desc=g("nDesc");m.when=g("nWhen");m.where=g("nWhere")}};
+  const re=()=>{keep();render();syncBack()};
+  v.querySelectorAll("[data-tv]").forEach(b=>b.onclick=()=>{S.tview=b.dataset.tv;re()});
+  v.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{m.type=b.dataset.ty;re()});
+  v.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{m.cat=+b.dataset.cat;re()});
+  v.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{m.age=b.dataset.age;re()});
+  v.querySelectorAll("[data-gp]").forEach(b=>b.onclick=()=>{m.gp=+b.dataset.gp;re()});
+  v.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{m.spots=Math.max(1,Math.min(40,m.spots+ +b.dataset.n));re()});
+  const pb=$("pub");if(pb)pb.onclick=async()=>{keep();
+    if(m.title.trim().length<3||!m.when.trim()||!m.where.trim()){$("err").textContent=t.badForm;return haptic("error")}
+    pb.disabled=true;const r=await load("create",{mission:m});
+    if(r.ok){haptic("success");toast(t.created);S.nm={...m,title:"",desc:"",when:"",where:""};S.tview="list";render();syncBack()}else{pb.disabled=false;$("err").textContent=t.errP;haptic("error")}};
+  v.querySelectorAll("[data-ok]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await load("confirm",{id:b.dataset.ok,student:b.dataset.st});
+    if(r.ok){haptic("success");toast(t.sentT)}else render()});
+  v.querySelectorAll("[data-close]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await load("close",{id:b.dataset.close});if(r.ok)toast(t.closedT)});
 }
 function closeSheet(){$("scrim").classList.remove("on");$("sheet").classList.remove("on");syncBack()}
 $("scrim").onclick=closeSheet;

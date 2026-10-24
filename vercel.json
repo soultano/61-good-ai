@@ -1,1 +1,6 @@
-{"cleanUrls":true}
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/app", "destination": "https://t.me/goodaiuz_bot", "permanent": false }
+  ]
+}

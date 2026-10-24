@@ -17,7 +17,7 @@
     <a href="#about" data-i18n="nav.about"></a><a href="#how" data-i18n="nav.how"></a><a href="#ours" data-i18n="nav.ours"></a><a href="#school" data-i18n="nav.school"></a><a href="#roadmap" data-i18n="nav.roadmap"></a>
   </div>
   <div class="langs"><button data-lang="uz">UZ</button><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
-  <a class="btn pri demo-link" href="app.html" data-i18n="nav.demo"></a>
+  <a class="btn pri demo-link" href="https://t.me/goodaiuz_bot" target="_blank" rel="noopener" data-i18n="nav.demo"></a>
 </div></nav>
 
 <header class="hero">
@@ -27,7 +27,7 @@
       <span class="badge" data-i18n="hero.badge"></span>
       <h1 data-i18n="hero.title"></h1>
       <p class="sub" data-i18n="hero.sub"></p>
-      <div class="ctas"><a class="btn pri demo-link" href="app.html"><span data-i18n="hero.cta"></span> →</a><a class="btn sec" href="#how" data-i18n="hero.cta2"></a></div>
+      <div class="ctas"><a class="btn pri demo-link" href="https://t.me/goodaiuz_bot" target="_blank" rel="noopener"><span data-i18n="hero.cta"></span> →</a><a class="btn sec" href="#how" data-i18n="hero.cta2"></a></div>
       <div class="tags"><span>🏫 <b data-i18n="hero.tag1"></b></span><span>✨ <b data-i18n="hero.tag2"></b></span><span>🙌 <b data-i18n="hero.tag3"></b></span></div>
     </div>
     <div class="phone"><div class="screen">
@@ -133,8 +133,8 @@
   <div class="kicker" data-i18n="road.kicker"></div>
   <h2 data-i18n="road.title"></h2>
   <div class="road">
-    <div class="rm now reveal"><small data-i18n="road.r1.w"></small><h3 data-i18n="road.r1.t"></h3><p data-i18n="road.r1.d"></p></div>
-    <div class="rm reveal"><small data-i18n="road.r2.w"></small><h3 data-i18n="road.r2.t"></h3><p data-i18n="road.r2.d"></p></div>
+    <div class="rm reveal"><small data-i18n="road.r1.w"></small><h3 data-i18n="road.r1.t"></h3><p data-i18n="road.r1.d"></p></div>
+    <div class="rm now reveal"><small data-i18n="road.r2.w"></small><h3 data-i18n="road.r2.t"></h3><p data-i18n="road.r2.d"></p></div>
     <div class="rm reveal"><small data-i18n="road.r3.w"></small><h3 data-i18n="road.r3.t"></h3><p data-i18n="road.r3.d"></p></div>
     <div class="rm reveal"><small data-i18n="road.r4.w"></small><h3 data-i18n="road.r4.t"></h3><p data-i18n="road.r4.d"></p></div>
     <div class="rm reveal"><small data-i18n="road.r5.w"></small><h3 data-i18n="road.r5.t"></h3><p data-i18n="road.r5.d"></p></div>
@@ -145,14 +145,13 @@
 <div class="cta reveal">
   <h2 data-i18n="cta.title"></h2>
   <p data-i18n="cta.sub"></p>
-  <a class="btn pri demo-link" href="app.html"><span data-i18n="cta.btn"></span> →</a>
+  <a class="btn pri demo-link" href="https://t.me/goodaiuz_bot" target="_blank" rel="noopener"><span data-i18n="cta.btn"></span> →</a>
 </div>
 
 <footer><div class="wrap" data-i18n="foot"></div></footer>
 
 <script src="i18n.js"></script>
 <script>
-  window.onLang = l => document.querySelectorAll(".demo-link").forEach(a => a.href = "app.html?lang=" + l);
   initLang();
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));

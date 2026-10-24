@@ -3,11 +3,11 @@
 Платформа школьной жизни школы №61 (Ташкент): кружки, события, GOOD-миссии и баллы.
 
 - `index.html`, `style.css`, `i18n.js`: лендинг (UZ/RU/EN)
-- `app.html`: кликабельный демо-прототип для браузера (без сервера)
+- `/app` перенаправляет в бота (старая ссылка на прототип)
 - `tg.html`: Telegram Mini App (`/tg`), открывается из бота [@goodaiuz_bot](https://t.me/goodaiuz_bot)
 - `api/`: серверные функции Vercel
 
-Каждый push в `main` автоматически выкатывается на https://61-good-ai.vercel.app.
+Каждый push в `main` автоматически выкатывается на https://goodai.uz (и https://61-good-ai.vercel.app).
 
 ## Как работает Mini App
 

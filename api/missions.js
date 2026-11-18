@@ -1,6 +1,9 @@
 // POST {initData, action, ...}: missions, sign-ups and GOOD points.
 //   list                      -> feed for students, own missions with participants for teachers
+//   get     {id}              -> one mission (opened from an invite link)
 //   create  {mission}         -> active teacher publishes a mission or club
+//   edit    {id, mission}     -> author changes it; signed-up students get notified of date/place changes
+//   delete  {id}              -> author removes it
 //   join    {id}              -> active student signs up
 //   confirm {id, student}     -> mission author confirms; points go to the student
 //   close   {id}              -> mission author stops sign-ups
@@ -13,6 +16,7 @@ const AGES = ["7+", "10+", "11+", "12+", "14+"];
 const GPS = [10, 20, 30, 40, 50];
 const EMOJI = ["⚽", "💻", "🎨", "📚", "📸", "🌱", "🎧", "🔬"];
 const clean = (s, n) => String(s || "").replace(/\s+/g, " ").trim().slice(0, n);
+const BOT_LINK = id => `https://t.me/goodaiuz_bot?start=m_${id}`;
 
 async function loadAll(ids) {
   const res = await kvPipe(ids.flatMap(id => [["GET", `mission:${id}`], ["HGETALL", `joins:${id}`]]));
@@ -20,15 +24,26 @@ async function loadAll(ids) {
     const m = res[2 * i] ? JSON.parse(res[2 * i]) : null;
     if (m) m.joins = hash(res[2 * i + 1]);
     return m;
-  }).filter(Boolean).sort((a, b) => b.createdAt - a.createdAt);
+  }).filter(Boolean).sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999") || (a.time || "").localeCompare(b.time || "") || b.createdAt - a.createdAt);
 }
 
 const view = (m, uid) => {
   const states = Object.values(m.joins);
   return { id: m.id, type: m.type, title: m.title, desc: m.desc, cat: m.cat, emoji: EMOJI[m.cat], gp: m.gp, spots: m.spots, age: m.age,
-    when: m.when, where: m.where, author: m.authorName, status: m.status, count: states.length, done: states.filter(s => s === "done").length,
-    my: m.joins[uid] || null };
+    date: m.date || "", time: m.time || "", when: m.when || "", where: m.where, author: m.authorName, mine: String(m.authorId) === uid,
+    status: m.status, count: states.length, done: states.filter(s => s === "done").length, my: m.joins[uid] || null, link: BOT_LINK(m.id) };
 };
+
+// Validated mission fields from the client; returns null when required ones are missing.
+function fields(x) {
+  const type = x.type === "c" ? "c" : "m";
+  const f = { type, title: clean(x.title, 80), desc: clean(x.desc, 400), cat: Math.max(0, Math.min(7, parseInt(x.cat, 10) || 0)),
+    gp: type === "m" && GPS.includes(+x.gp) ? +x.gp : 0, spots: Math.max(1, Math.min(40, parseInt(x.spots, 10) || 5)),
+    age: AGES.includes(x.age) ? x.age : "10+", date: /^\d{4}-\d{2}-\d{2}$/.test(x.date) ? x.date : "",
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(x.time) ? x.time : "", where: clean(x.where, 40) };
+  if (f.title.length < 3 || !f.date || !f.where || (type === "m" && !f.gp)) return null;
+  return f;
+}
 
 async function points(u) {
   const [p, c] = await kvPipe([["GET", `pts:${u.id}`], ["GET", `cls:${u.grade}`]]);
@@ -49,18 +64,41 @@ module.exports = async (req, res) => {
     if (String(m.authorId) !== uid) { send(res, 403, { error: "not_author" }); return null; }
     return m;
   };
+  const save = m => { const { joins, ...rest } = m; return kv("SET", `mission:${m.id}`, JSON.stringify(rest)); };
 
   switch (b.action) {
+    case "get": {
+      const m = (await loadAll([String(b.id)]))[0];
+      if (!m) return send(res, 404, { error: "not_found" });
+      return send(res, 200, { item: view(m, uid) });
+    }
     case "create": {
       if (!teacher) return send(res, 403, { error: "teachers_only" });
-      const x = b.mission || {};
-      const type = x.type === "c" ? "c" : "m";
-      const m = { id: crypto.randomBytes(6).toString("hex"), type, title: clean(x.title, 80), desc: clean(x.desc, 400),
-        cat: Math.max(0, Math.min(7, parseInt(x.cat, 10) || 0)), gp: type === "m" && GPS.includes(+x.gp) ? +x.gp : 0,
-        spots: Math.max(1, Math.min(40, parseInt(x.spots, 10) || 5)), age: AGES.includes(x.age) ? x.age : "10+",
-        when: clean(x.when, 40), where: clean(x.where, 40), authorId: me.id, authorName: me.name, status: "open", createdAt: Date.now() };
-      if (m.title.length < 3 || !m.when || !m.where || (type === "m" && !m.gp)) return send(res, 400, { error: "bad_input" });
+      const f = fields(b.mission || {});
+      if (!f) return send(res, 400, { error: "bad_input" });
+      const m = { id: crypto.randomBytes(6).toString("hex"), ...f, authorId: me.id, authorName: me.name, status: "open", createdAt: Date.now() };
       await kvPipe([["SET", `mission:${m.id}`, JSON.stringify(m)], ["SADD", "missions", m.id]]);
+      break;
+    }
+    case "edit": {
+      if (!teacher) return send(res, 403, { error: "teachers_only" });
+      const m = await own(b.id); if (!m) return;
+      const f = fields({ ...b.mission, type: m.type });
+      if (!f) return send(res, 400, { error: "bad_input" });
+      if (f.spots < Object.keys(m.joins).length) return send(res, 409, { error: "spots_below_count" });
+      const moved = f.date !== m.date || f.time !== m.time || f.where !== m.where;
+      Object.assign(m, f, { when: "", updatedAt: Date.now() });
+      await save(m);
+      if (moved) for (const sid of Object.keys(m.joins))
+        tg("sendMessage", { chat_id: sid, text: `📅 Изменение: «${m.title}» — ${m.date}${m.time ? " " + m.time : ""}, ${m.where}` }).catch(() => {});
+      break;
+    }
+    case "delete": {
+      if (!teacher) return send(res, 403, { error: "teachers_only" });
+      const m = await own(b.id); if (!m) return;
+      await kvPipe([["SREM", "missions", m.id], ["DEL", `mission:${m.id}`], ["DEL", `joins:${m.id}`]]);
+      for (const [sid, st] of Object.entries(m.joins)) if (st === "joined")
+        tg("sendMessage", { chat_id: sid, text: `❌ Отменено: «${m.title}»` }).catch(() => {});
       break;
     }
     case "join": {
@@ -87,8 +125,8 @@ module.exports = async (req, res) => {
     case "close": {
       if (!teacher) return send(res, 403, { error: "teachers_only" });
       const m = await own(b.id); if (!m) return;
-      delete m.joins; m.status = "closed";
-      await kv("SET", `mission:${m.id}`, JSON.stringify(m));
+      m.status = "closed";
+      await save(m);
       break;
     }
     case "list": case undefined: break;
@@ -105,6 +143,6 @@ module.exports = async (req, res) => {
   const mine = all.filter(m => String(m.authorId) === uid);
   const sids = [...new Set(mine.flatMap(m => Object.keys(m.joins)))];
   const users = sids.length ? await kvPipe(sids.map(id => ["GET", `user:${id}`])) : [];
-  const names = Object.fromEntries(sids.map((id, i) => { const u = users[i] && JSON.parse(users[i]); return [id, u ? { name: u.name, grade: u.grade } : { name: "?", grade: "" }]; }));
+  const names = Object.fromEntries(sids.map((id, i) => { const u = users[i] && JSON.parse(users[i]); return [id, u ? { name: u.name, grade: u.grade, username: u.tg && u.tg.username } : { name: "?", grade: "" }]; }));
   send(res, 200, { mine: mine.map(m => ({ ...view(m, uid), kids: Object.entries(m.joins).map(([id, st]) => ({ id, state: st, ...names[id] })) })) });
 };

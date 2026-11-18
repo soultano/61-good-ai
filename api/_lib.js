@@ -48,6 +48,7 @@ async function kvPipe(cmds) {
 }
 function memCmd([op, k, ...a]) {
   switch (op) {
+    case "DEL": return mem.delete(k) ? 1 : 0;
     case "INCRBY": { const v = Number(mem.get(k) || 0) + Number(a[0]); mem.set(k, String(v)); return v; }
     case "HSET": { const h = mem.get(k) || new Map(); for (let i = 0; i < a.length; i += 2) h.set(String(a[i]), String(a[i + 1])); mem.set(k, h); return 1; }
     case "HGET": { const h = mem.get(k); return h && h.has(String(a[0])) ? h.get(String(a[0])) : null; }

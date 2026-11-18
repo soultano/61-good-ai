@@ -1,5 +1,5 @@
 // Telegram webhook: /start opens the Mini App; admins approve/reject teachers via inline buttons.
-const { webhookSecret, readBody, tg, isAdmin, decideTeacher, send } = require("./_lib");
+const { webhookSecret, readBody, tg, kv, isAdmin, decideTeacher, send } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.headers["x-telegram-bot-api-secret-token"] !== webhookSecret()) return send(res, 401, { ok: false });
@@ -7,9 +7,14 @@ module.exports = async (req, res) => {
   const appUrl = `https://${req.headers.host}/tg`;
   try {
     if (up.message && /^\/start/.test(up.message.text || "")) {
+      // Invite links look like t.me/goodaiuz_bot?start=m_<id>: open the Mini App straight on that mission.
+      const id = ((up.message.text || "").match(/^\/start m_([0-9a-f]{12})$/) || [])[1];
+      const raw = id && await kv("GET", `mission:${id}`);
+      const m = raw && JSON.parse(raw);
       await tg("sendMessage", { chat_id: up.message.chat.id,
-        text: "Привет! Это 61 GOOD AI — кружки, события и GOOD-миссии школы №61.\nSalom! 61 GOOD AI — 61-maktabning to‘garaklari, tadbirlari va GOOD-missiyalari.",
-        reply_markup: { inline_keyboard: [[{ text: "🚀 Открыть 61 GOOD AI", web_app: { url: appUrl } }]] } });
+        text: m ? `📌 ${m.title}\n📅 ${m.date || m.when || ""}${m.time ? " " + m.time : ""} · ${m.where}\n\nОткройте, чтобы записаться · Yozilish uchun oching`
+          : "Привет! Это 61 GOOD AI — кружки, события и GOOD-миссии школы №61.\nSalom! 61 GOOD AI — 61-maktabning to‘garaklari, tadbirlari va GOOD-missiyalari.",
+        reply_markup: { inline_keyboard: [[{ text: m ? "👉 Открыть и записаться" : "🚀 Открыть 61 GOOD AI", web_app: { url: m ? `${appUrl}?m=${m.id}` : appUrl } }]] } });
     }
     const cq = up.callback_query;
     if (cq && /^(ap|rj):\d+$/.test(cq.data || "")) {

@@ -155,6 +155,13 @@ textarea.fld{min-height:84px;resize:vertical}
 .tcard .hd{display:flex;gap:12px;align-items:center;margin-bottom:6px}.tcard .hd .ic{width:44px;height:44px;font-size:22px}
 .lnk{font-weight:800;font-size:13px;color:var(--muted);text-decoration:underline;margin-top:10px;display:inline-block}
 .muted{color:var(--muted);font-weight:700;margin:4px 0 16px}
+.cal{background:var(--paper);border-radius:16px;padding:10px}
+.calh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.calh b{text-transform:capitalize;font-size:14px}.calh button{width:34px;height:34px;border-radius:10px;background:#fff;font-size:20px;font-weight:800}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.calg i{font-style:normal;font-size:11px;font-weight:800;color:var(--muted);padding:4px 0;text-transform:uppercase}
+.calg button{height:38px;border-radius:10px;background:#fff;font-weight:800;font-size:14px;position:relative}.calg button:disabled{opacity:.3;background:none}
+.calg button.td{box-shadow:inset 0 0 0 2px var(--violet)}.calg button.on{background:var(--ink);color:#fff}
+.calg button.mk:after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--pink)}
+.acts2{display:flex;gap:8px;margin-top:10px}.acts2 button{flex:1;padding:9px;border-radius:12px;background:var(--paper);font-weight:800;font-size:13px}
 </style>
 </head>
 <body>
@@ -187,7 +194,7 @@ const T = {
     toast:"⚡ <b>+{p} GOOD</b>",joinedT:"Записан! Учитель получил уведомление ✓",
     schT:"Наша школа",schA:"Авиасозлар-1, 78 · у рынка «Авиасозлар»",schH:"Пн–Сб 8:00–17:00",schB:"Автобусы 30, 50, 110",call:"Позвонить",map:"Карта",
     tMine:"Мои миссии",tNew:"+ Новая",tNone:"Вы ещё ничего не опубликовали. Нажмите «+ Новая».",tType:["Миссия","Кружок"],tTitle:"Название",tTitlePh:"Оформить зал к празднику",tDesc:"Описание",tDescPh:"Что нужно сделать",
-    tCat:"Направление",tAge:"Возраст",tSpots:"Сколько учеников",tReward:"Награда",tWhen:"Когда",tWhenPh:"Пт 15:00",tWhere:"Где",tWherePh:"Актовый зал",tPublish:"Опубликовать",created:"Опубликовано ✓",
+    tDate:"Дата",tTime:"Время",pickDate:"Выберите дату в календаре",edit:"✏️ Изменить",share:"🔗 Поделиться",invite:"🔗 Пригласить друзей",copy:"Скопировать ссылку",copied:"Ссылка скопирована ✓",del:"Удалить",delQ:"Удалить «{t}»? Записавшиеся получат уведомление.",deleted:"Удалено",save:"Сохранить",saved:"Сохранено ✓",editT:"Редактирование",spotsLow:"Мест не может быть меньше, чем уже записалось",notFound:"Ивент не найден или удалён",shareText:"Приглашаю: «{t}» · 61 GOOD AI",kidsT:"Записались",past:"Прошло",tCat:"Направление",tAge:"Возраст",tSpots:"Сколько учеников",tReward:"Награда",tWhen:"Когда",tWhenPh:"Пт 15:00",tWhere:"Где",tWherePh:"Актовый зал",tPublish:"Опубликовать",created:"Опубликовано ✓",
     tNoKids:"Пока никто не записался",tConfirm:"✓ Выполнено",tConfirmed:"Подтверждено",tSigned:"записан",tClose:"Закрыть набор",tClosed:"Набор закрыт",closedT:"Набор закрыт",
     tRule:"Баллы начисляются только после вашего подтверждения.",sentT:"Баллы начислены ✓"},
   uz:{o1t:"61-maktabga xush kelibsan!",o1p:"Toshkent, Yashnobod tumani. Barcha to‘garaklar, tadbirlar va GOOD-missiyalar — bitta joyda.",o1b:"🎒 Men o‘quvchiman",o1x:"🧑‍🏫 Men o‘qituvchiman",
@@ -207,7 +214,7 @@ const T = {
     toast:"⚡ <b>+{p} GOOD</b>",joinedT:"Yozilding! O‘qituvchiga xabar ketdi ✓",
     schT:"Bizning maktab",schA:"Aviasozlar-1, 78 · «Aviasozlar» bozori yonida",schH:"Dush–Shan 8:00–17:00",schB:"Avtobus 30, 50, 110",call:"Qo‘ng‘iroq",map:"Xarita",
     tMine:"Mening missiyalarim",tNew:"+ Yangi",tNone:"Hali hech narsa e’lon qilmadingiz. «+ Yangi» ni bosing.",tType:["Missiya","To‘garak"],tTitle:"Nomi",tTitlePh:"Bayram uchun zalni bezash",tDesc:"Tavsif",tDescPh:"Nima qilish kerak",
-    tCat:"Yo‘nalish",tAge:"Yosh",tSpots:"Nechta o‘quvchi",tReward:"Mukofot",tWhen:"Qachon",tWhenPh:"Juma 15:00",tWhere:"Qayerda",tWherePh:"Aktlar zali",tPublish:"E’lon qilish",created:"E’lon qilindi ✓",
+    tDate:"Sana",tTime:"Vaqt",pickDate:"Kalendardan sanani tanlang",edit:"✏️ Tahrirlash",share:"🔗 Ulashish",invite:"🔗 Do‘stlarni taklif qilish",copy:"Havolani nusxalash",copied:"Havola nusxalandi ✓",del:"O‘chirish",delQ:"«{t}» o‘chirilsinmi? Yozilganlarga xabar boradi.",deleted:"O‘chirildi",save:"Saqlash",saved:"Saqlandi ✓",editT:"Tahrirlash",spotsLow:"Joylar yozilganlardan kam bo‘lishi mumkin emas",notFound:"Tadbir topilmadi yoki o‘chirilgan",shareText:"Taklif qilaman: «{t}» · 61 GOOD AI",kidsT:"Yozilganlar",past:"O‘tdi",tCat:"Yo‘nalish",tAge:"Yosh",tSpots:"Nechta o‘quvchi",tReward:"Mukofot",tWhen:"Qachon",tWhenPh:"Juma 15:00",tWhere:"Qayerda",tWherePh:"Aktlar zali",tPublish:"E’lon qilish",created:"E’lon qilindi ✓",
     tNoKids:"Hali hech kim yozilmadi",tConfirm:"✓ Bajarildi",tConfirmed:"Tasdiqlandi",tSigned:"yozildi",tClose:"Yozilishni yopish",tClosed:"Yozilish yopilgan",closedT:"Yozilish yopildi",
     tRule:"Ballar faqat siz tasdiqlaganingizdan keyin tushadi.",sentT:"Ballar tushdi ✓"},
   en:{o1t:"Welcome to School 61!",o1p:"Tashkent, Yashnobod district. Every club, event and GOOD mission in one place.",o1b:"🎒 I'm a student",o1x:"🧑‍🏫 I'm a teacher",
@@ -227,7 +234,7 @@ const T = {
     toast:"⚡ <b>+{p} GOOD</b>",joinedT:"You're in! The teacher was notified ✓",
     schT:"Our school",schA:"Aviasozlar-1, 78 · by Aviasozlar bazaar",schH:"Mon–Sat 8:00–17:00",schB:"Buses 30, 50, 110",call:"Call",map:"Map",
     tMine:"My missions",tNew:"+ New",tNone:"You haven’t published anything yet. Tap “+ New”.",tType:["Mission","Club"],tTitle:"Title",tTitlePh:"Decorate the hall for the holiday",tDesc:"Description",tDescPh:"What needs doing",
-    tCat:"Category",tAge:"Age",tSpots:"How many students",tReward:"Reward",tWhen:"When",tWhenPh:"Fri 15:00",tWhere:"Where",tWherePh:"Assembly hall",tPublish:"Publish",created:"Published ✓",
+    tDate:"Date",tTime:"Time",pickDate:"Pick a date in the calendar",edit:"✏️ Edit",share:"🔗 Share",invite:"🔗 Invite friends",copy:"Copy link",copied:"Link copied ✓",del:"Delete",delQ:"Delete “{t}”? Signed-up students will be notified.",deleted:"Deleted",save:"Save",saved:"Saved ✓",editT:"Editing",spotsLow:"Spots can’t be fewer than students already signed up",notFound:"Event not found or deleted",shareText:"Join me: “{t}” · 61 GOOD AI",kidsT:"Signed up",past:"Past",tCat:"Category",tAge:"Age",tSpots:"How many students",tReward:"Reward",tWhen:"When",tWhenPh:"Fri 15:00",tWhere:"Where",tWherePh:"Assembly hall",tPublish:"Publish",created:"Published ✓",
     tNoKids:"Nobody has signed up yet",tConfirm:"✓ Done",tConfirmed:"Confirmed",tSigned:"signed up",tClose:"Close sign-ups",tClosed:"Sign-ups closed",closedT:"Sign-ups closed",
     tRule:"Points are added only after you confirm.",sentT:"Points sent ✓"}
 };
@@ -244,12 +251,15 @@ const TGU = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
 // scr: current full-screen step (null = main app); me: registration from the server; data: missions from the server
 const S={lang:"ru",scr:"loading",me:null,admin:false,pending:[],adminOpen:false,data:null,
   form:{name:[TGU.first_name,TGU.last_name].filter(Boolean).join(" "),grade:"",letter:"",subject:""},err:"",
-  tab:0,filter:-1,ints:new Set(),tview:"list",nm:{type:"m",title:"",desc:"",cat:2,age:"10+",spots:5,gp:20,when:"",where:""}};
+  tab:0,filter:-1,ints:new Set(),tview:"list",nm:{type:"m",title:"",desc:"",cat:2,age:"10+",spots:5,gp:20,date:"",time:"15:00",where:""},cal:null,
+  // mission opened from an invite link: ?m=<id> on the page URL or startapp=m_<id>
+  openId:(new URLSearchParams(location.search).get("m")||((tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||"").replace(/^m_/,"")).replace(/[^0-9a-f]/g,"")||null};
 try{const q=new URLSearchParams(location.search).get("lang")||localStorage.getItem("lang")||(TGU.language_code||"").slice(0,2);if(T[q])S.lang=q}catch(e){}
 const $=id=>document.getElementById(id);
 const L=()=>T[S.lang];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(s,o)=>s.replace(/\{(\w)\}/g,(_,k)=>esc(o[k]));
+const plain=(s,o)=>s.replace(/\{(\w)\}/g,(_,k)=>o[k]);
 const haptic=t=>{try{tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
 const tick=()=>{try{tg.HapticFeedback.selectionChanged()}catch(e){}};
 
@@ -280,6 +290,7 @@ function applyMe(r){
 async function load(action,extra){
   const r=await api("missions",{action:action||"list",...extra}).catch(()=>({}));
   if(r.items||r.mine){S.data=r;render()}
+  if(S.openId&&S.data){const id=S.openId;S.openId=null;openSheet(id)}
   return r;
 }
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.me&&!S.scr)load()});
@@ -289,7 +300,7 @@ const BACK={sreg:"role",treg:"role",ints:"sreg"};
 function goBack(){
   if($("sheet").classList.contains("on"))return closeSheet();
   if(S.adminOpen){S.adminOpen=false;return paint()}
-  if(!S.scr&&S.tview==="new"){S.tview="list";return paint()}
+  if(!S.scr&&S.tview==="new"){S.tview="list";if(S.nm.id)S.nm={...S.nm,id:undefined,title:"",desc:"",date:"",where:""};return paint()}
   if(S.scr==="sreg"&&S.me&&S.me.status==="rejected"){S.scr="rejected";return paint()}
   if(BACK[S.scr]){S.scr=BACK[S.scr];S.err="";paint()}
 }
@@ -374,10 +385,16 @@ function renderAdmin(t,v){
 
 const items=()=>(S.data&&S.data.items)||[];
 const full=it=>it.count>=it.spots;
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const LOC={ru:"ru-RU",uz:"uz-Latn-UZ",en:"en-GB"};
+const df=(o,d)=>{try{return new Intl.DateTimeFormat(LOC[S.lang],o).format(d)}catch(e){return new Intl.DateTimeFormat("ru-RU",o).format(d)}};
+// Human date for a mission: "Пт, 21 нояб. · 15:00"; old missions only have free-text `when`.
+const whenOf=it=>it.date?df({weekday:"short",day:"numeric",month:"short"},new Date(it.date+"T00:00"))+(it.time?" · "+it.time:""):(it.when||"");
+const isPast=it=>it.date&&it.date<today();
 function itemRow(it){const t=L();
   let tag=it.type==="m"?`+${it.gp}`:t.join,cls=it.type==="m"?"":"club";
   if(it.my==="done"){tag="✓ +"+it.gp;cls="done"}else if(it.my){tag="✓";cls="done"}else if(full(it)||it.status!=="open"){tag="—";cls="club"}
-  return `<button class="item" data-id="${esc(it.id)}"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><span class="meta">${esc(it.when)} · ${it.count}/${it.spots}</span><div class="bar"><i style="width:${Math.min(100,it.count/it.spots*100)}%"></i></div></div><span class="tag ${cls}">${tag}</span></button>`}
+  return `<button class="item" data-id="${esc(it.id)}"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><span class="meta">${esc(whenOf(it))} · ${it.count}/${it.spots}</span><div class="bar"><i style="width:${Math.min(100,it.count/it.spots*100)}%"></i></div></div><span class="tag ${cls}">${tag}</span></button>`}
 
 function render(){const t=L(),v=$("view"),u=S.me;
   const showApp=S.adminOpen||(!S.scr&&u);
@@ -390,13 +407,12 @@ function render(){const t=L(),v=$("view"),u=S.me;
   $("tabs").innerHTML=["🏠","🎯","😎"].map((e,i)=>`<button class="${S.tab===i?"on":""}" data-t="${i}"><span class="e">${e}</span>${t.tabs[i]}</button>`).join("");
   const pts=S.data.points;
   const top=`<div class="top"><div><small>${fmt(t.gradeN,{g:u.grade})}</small><h2>${fmt(t.hiN,{n:u.name.split(" ")[0]})}</h2></div><span class="gp">⚡ ${pts} GOOD</span></div>`;
-  const open=items().filter(it=>it.status==="open");
+  const open=items().filter(it=>it.status==="open"&&!isPast(it));
   if(S.tab===0){
     const pass=it=>S.filter<0||it.cat===S.filter;
-    const byInt=(a,b)=>S.ints.has(b.cat)-S.ints.has(a.cat);
     const pick=open.find(it=>S.ints.has(it.cat)&&!it.my&&!full(it));
-    const ms=open.filter(it=>it.type==="m"&&pass(it)).sort(byInt),cs=open.filter(it=>it.type==="c"&&pass(it)).sort(byInt);
-    v.innerHTML=top+(pick?`<div class="ai"><small>${t.forYou}</small><p>${esc(pick.title)} — ${esc(pick.when)}</p><button data-id="${esc(pick.id)}">${t.view} →</button></div>`:"")+
+    const ms=open.filter(it=>it.type==="m"&&pass(it)),cs=open.filter(it=>it.type==="c"&&pass(it));
+    v.innerHTML=top+(pick?`<div class="ai"><small>${t.forYou}</small><p>${esc(pick.title)} — ${esc(whenOf(pick))}</p><button data-id="${esc(pick.id)}">${t.view} →</button></div>`:"")+
     `<div class="filters"><button class="${S.filter<0?"on":""}" data-f="-1">🔥 ${t.all}</button>${CATS.map(i=>`<button class="${S.filter===i?"on":""}" data-f="${i}">${INT_E[i]} ${t.interests[i]}</button>`).join("")}</div>
     ${ms.length?`<div class="sec-t"><h3>${t.missions}</h3><small>${ms.length}</small></div>`+ms.map(itemRow).join(""):""}
     ${cs.length?`<div class="sec-t"><h3>${t.clubs}</h3><small>${cs.length}</small></div>`+cs.map(itemRow).join(""):""}
@@ -421,57 +437,97 @@ $("view").onclick=e=>{if(!S.me||S.me.role!=="student"||S.adminOpen)return;
   const it=e.target.closest("[data-id]");if(it)openSheet(it.dataset.id);
 };
 
-function openSheet(id){const it=items().find(x=>x.id===id),t=L();if(!it)return;
-  const btn=it.my==="done"?`<button class="big" disabled>✓ +${it.gp} GOOD</button>`:it.my?`<button class="big" disabled>${it.type==="m"?t.waitT:t.joined}</button>`:
-    it.status!=="open"?`<button class="big" disabled>${t.tClosed}</button>`:full(it)?`<button class="big" disabled>${t.full}</button>`:`<button class="big lime" id="joinB">${t.join}</button>`;
+// Invite link to a mission: Telegram's share dialog inside the app, clipboard elsewhere.
+function share(it){const t=L(),text=plain(t.shareText,{t:it.title});
+  if(tg&&tg.openTelegramLink){try{return tg.openTelegramLink("https://t.me/share/url?url="+encodeURIComponent(it.link)+"&text="+encodeURIComponent(text))}catch(e){}}
+  copyLink(it);
+}
+function copyLink(it){const t=L();
+  (navigator.clipboard?navigator.clipboard.writeText(it.link):Promise.reject()).then(()=>toast(t.copied)).catch(()=>{window.prompt(t.copy,it.link)});
+}
+const findItem=id=>items().find(x=>x.id===id)||((S.data&&S.data.mine)||[]).find(x=>x.id===id);
+async function openSheet(id,fetched){const t=L();let it=fetched||findItem(id);
+  if(!it){const r=await load("get",{id});if(!r.item){toast(t.notFound);return}it=r.item}
+  const student=S.me.role==="student";
+  const btn=!student?"":it.my==="done"?`<button class="big" disabled>✓ +${it.gp} GOOD</button>`:it.my?`<button class="big" disabled>${it.type==="m"?t.waitT:t.joined}</button>`:
+    it.status!=="open"||isPast(it)?`<button class="big" disabled>${t.tClosed}</button>`:full(it)?`<button class="big" disabled>${t.full}</button>`:`<button class="big lime" id="joinB">${t.join}</button>`;
   $("sheet").innerHTML=`<div class="grab"></div><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><h2>${esc(it.title)}</h2><p>${esc(it.desc)}</p>
-  <div class="facts"><div>${t.when}<b>${esc(it.when)}</b></div><div>${t.where}<b>${esc(it.where)}</b></div><div>${t.spots}<b>${it.count} / ${it.spots}</b></div><div>${it.type==="m"?t.reward:t.age}<b>${it.type==="m"?"⚡ +"+it.gp+" GOOD":esc(it.age)}</b></div>
-  <div style="grid-column:1/-1">${t.by}<b>${esc(it.author)}</b></div></div>${btn}`;
+  <div class="facts"><div>${t.when}<b>${esc(whenOf(it))}</b></div><div>${t.where}<b>${esc(it.where)}</b></div><div>${t.spots}<b>${it.count} / ${it.spots}</b></div><div>${it.type==="m"?t.reward:t.age}<b>${it.type==="m"?"⚡ +"+it.gp+" GOOD":esc(it.age)}</b></div>
+  <div style="grid-column:1/-1">${t.by}<b>${esc(it.author)}</b></div></div>${btn}
+  <button class="big" id="shareB" style="margin-top:8px;background:var(--soft);color:var(--ink)">${t.invite}</button>`;
   $("scrim").classList.add("on");$("sheet").classList.add("on");syncBack();
+  $("shareB").onclick=()=>share(it);
   const jb=$("joinB");if(jb)jb.onclick=async()=>{jb.disabled=true;const r=await load("join",{id});
-    if(r.ok){haptic("success");toast(t.joinedT);openSheet(id)}else{haptic("error");toast(r.error==="full"?t.full:t.errP);openSheet(id)}};
+    if(r.ok){haptic("success");toast(t.joinedT)}else{haptic("error");toast(r.error==="full"?t.full:t.errP)}openSheet(id)};
+}
+
+// Month grid; days before today are disabled, days with own events get a dot.
+function calHTML(sel){const c=S.cal,first=new Date(c.y,c.m,1),td=today();
+  const marks=new Set(((S.data&&S.data.mine)||[]).map(x=>x.date));
+  const lead=(first.getDay()+6)%7,days=new Date(c.y,c.m+1,0).getDate();
+  const wd=[...Array(7)].map((_,i)=>df({weekday:"narrow"},new Date(2024,0,1+i)));
+  let cells="";for(let i=0;i<lead;i++)cells+=`<span></span>`;
+  for(let d=1;d<=days;d++){const iso=c.y+"-"+String(c.m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    cells+=`<button data-day="${iso}" class="${iso===sel?"on":""}${iso===td?" td":""}${marks.has(iso)?" mk":""}" ${iso<td?"disabled":""}>${d}</button>`}
+  return `<div class="cal"><div class="calh"><button data-cm="-1">‹</button><b>${df({month:"long",year:"numeric"},first)}</b><button data-cm="1">›</button></div>
+    <div class="calg">${wd.map(w=>`<i>${w}</i>`).join("")}${cells}</div></div>`;
 }
 
 function renderTeacher(t,v){const m=S.nm,mine=(S.data&&S.data.mine)||[];
+  if(!S.cal){const d=m.date?new Date(m.date+"T00:00"):new Date();S.cal={y:d.getFullYear(),m:d.getMonth()}}
   let h=`<div class="top"><div><small>${t.tSub}</small><h2>${fmt(t.tHiN,{n:S.me.name.split(" ")[0]})}</h2></div>${S.admin?`<button class="gp" id="toA">${t.admBtn}</button>`:""}</div>
-  <div class="seg" style="margin-bottom:14px"><button data-tv="list" class="${S.tview==="list"?"on":""}">${t.tMine}</button><button data-tv="new" class="${S.tview==="new"?"on":""}">${t.tNew}</button></div>`;
+  <div class="seg" style="margin-bottom:14px"><button data-tv="list" class="${S.tview==="list"?"on":""}">${t.tMine}</button><button data-tv="new" class="${S.tview==="new"?"on":""}">${m.id?t.editT:t.tNew}</button></div>`;
   if(S.tview==="new"){
     h+=`<div class="tcard">
-      <div class="seg">${t.tType.map((n,i)=>`<button data-ty="${"mc"[i]}" class="${m.type==="mc"[i]?"on":""}">${n}</button>`).join("")}</div>
+      ${m.id?"":`<div class="seg">${t.tType.map((n,i)=>`<button data-ty="${"mc"[i]}" class="${m.type==="mc"[i]?"on":""}">${n}</button>`).join("")}</div>`}
       <label class="flbl">${t.tTitle}</label><input class="fld" id="nTitle" maxlength="80" placeholder="${t.tTitlePh}" value="${esc(m.title)}">
       <label class="flbl">${t.tDesc}</label><textarea class="fld" id="nDesc" maxlength="400" placeholder="${t.tDescPh}">${esc(m.desc)}</textarea>
-      <label class="flbl">${t.tCat}</label><div class="cats">${t.interests.map((n,i)=>`<button data-cat="${i}" class="${m.cat===i?"on":""}">${INT_E[i]} ${n}</button>`).join("")}</div>
-      <div class="frow"><div><label class="flbl">${t.tWhen}</label><input class="fld" id="nWhen" maxlength="40" placeholder="${t.tWhenPh}" value="${esc(m.when)}"></div>
+      <label class="flbl">${t.tDate}${m.date?": <b style='color:var(--ink)'>"+esc(whenOf({date:m.date}))+"</b>":""}</label>${calHTML(m.date)}
+      <div class="frow"><div><label class="flbl">${t.tTime}</label><input class="fld" id="nTime" type="time" value="${esc(m.time)}"></div>
       <div><label class="flbl">${t.tWhere}</label><input class="fld" id="nWhere" maxlength="40" placeholder="${t.tWherePh}" value="${esc(m.where)}"></div></div>
+      <label class="flbl">${t.tCat}</label><div class="cats">${t.interests.map((n,i)=>`<button data-cat="${i}" class="${m.cat===i?"on":""}">${INT_E[i]} ${n}</button>`).join("")}</div>
       <label class="flbl">${t.tAge}</label><div class="seg">${AGES.map(a=>`<button data-age="${a}" class="${m.age===a?"on":""}">${a}</button>`).join("")}</div>
       <label class="flbl">${t.tSpots}</label><div class="step"><button data-n="-1">−</button><b>${m.spots}</b><button data-n="1">+</button></div>
       ${m.type==="m"?`<label class="flbl">${t.tReward}</label><div class="seg">${GPS.map(g=>`<button data-gp="${g}" class="${m.gp===g?"on":""}">+${g}</button>`).join("")}</div>`:""}
-      <div class="err" id="err"></div><button class="big lime" id="pub">${t.tPublish}</button></div><p class="rule">🛡️ ${t.tRule}</p>`;
+      <div class="err" id="err"></div><button class="big lime" id="pub">${m.id?t.save:t.tPublish}</button></div><p class="rule">🛡️ ${t.tRule}</p>`;
   } else if(!S.data){h+=`<div class="spin" style="margin-top:40px"></div>`}
   else if(!mine.length){h+=`<p class="muted">${t.tNone}</p>`}
   else{
-    h+=mine.map(it=>`<div class="tcard"><div class="hd"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><div class="meta">${esc(it.when)} · ${esc(it.where)} · ${it.count}/${it.spots}${it.type==="m"?" · +"+it.gp+" GOOD":""}</div></div></div>`+
-      (it.kids.length?it.kids.map(k=>`<div class="kid"><span class="ka">🎒</span><div><b>${esc(k.name)}</b><small>${esc(k.grade)} · ${t.tSigned}</small></div>${
+    h+=mine.map(it=>`<div class="tcard"><div class="hd"><div class="ic ${COLORS[it.cat]}">${it.emoji}</div><div><b>${esc(it.title)}</b><div class="meta">${isPast(it)?"⏱ "+t.past+" · ":""}${esc(whenOf(it))} · ${esc(it.where)} · ${it.count}/${it.spots}${it.type==="m"?" · +"+it.gp+" GOOD":""}</div></div></div>`+
+      `<div class="acts2"><button data-ed="${esc(it.id)}">${t.edit}</button><button data-sh="${esc(it.id)}">${t.share}</button></div>`+
+      (it.kids.length?`<p class="meta" style="margin-top:10px">${t.kidsT}: ${it.kids.length}</p>`+it.kids.map(k=>`<div class="kid"><span class="ka">🎒</span><div><b>${esc(k.name)}</b><small>${esc(k.grade)}${k.username?" · @"+esc(k.username):""}</small></div>${
         it.type!=="m"?"":k.state==="done"?`<span class="tag done">${t.tConfirmed}</span>`:`<button class="okb" data-ok="${esc(it.id)}" data-st="${esc(k.id)}">${t.tConfirm}</button>`}</div>`).join(""):`<p class="meta" style="margin-top:8px">${t.tNoKids}</p>`)+
-      (it.status==="open"?`<button class="lnk" data-close="${esc(it.id)}">${t.tClose}</button>`:`<p class="meta" style="margin-top:10px">🔒 ${t.tClosed}</p>`)+`</div>`).join("");
+      `<div style="display:flex;gap:16px">${it.status==="open"?`<button class="lnk" data-close="${esc(it.id)}">${t.tClose}</button>`:`<p class="meta" style="margin-top:10px">🔒 ${t.tClosed}</p>`}<button class="lnk" style="color:var(--pink)" data-del="${esc(it.id)}">${t.del}</button></div></div>`).join("");
   }
   v.innerHTML=h;
   const ta=$("toA");if(ta)ta.onclick=openAdmin;
-  const keep=()=>{const g=id=>$(id)?$(id).value:"";if($("nTitle")){m.title=g("nTitle");m.desc=g("nDesc");m.when=g("nWhen");m.where=g("nWhere")}};
+  const keep=()=>{const g=id=>$(id)?$(id).value:"";if($("nTitle")){m.title=g("nTitle");m.desc=g("nDesc");m.time=g("nTime");m.where=g("nWhere")}};
   const re=()=>{keep();render();syncBack()};
-  v.querySelectorAll("[data-tv]").forEach(b=>b.onclick=()=>{S.tview=b.dataset.tv;re()});
+  const blank=()=>({type:m.type,title:"",desc:"",cat:m.cat,age:m.age,spots:5,gp:m.gp||20,date:"",time:"15:00",where:""});
+  v.querySelectorAll("[data-tv]").forEach(b=>b.onclick=()=>{if(b.dataset.tv==="list"&&S.nm.id)S.nm=blank();S.tview=b.dataset.tv;re()});
   v.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{m.type=b.dataset.ty;re()});
   v.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{m.cat=+b.dataset.cat;re()});
   v.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{m.age=b.dataset.age;re()});
   v.querySelectorAll("[data-gp]").forEach(b=>b.onclick=()=>{m.gp=+b.dataset.gp;re()});
   v.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{m.spots=Math.max(1,Math.min(40,m.spots+ +b.dataset.n));re()});
+  v.querySelectorAll("[data-day]").forEach(b=>b.onclick=()=>{m.date=b.dataset.day;tick();re()});
+  v.querySelectorAll("[data-cm]").forEach(b=>b.onclick=()=>{const d=new Date(S.cal.y,S.cal.m+ +b.dataset.cm,1);S.cal={y:d.getFullYear(),m:d.getMonth()};re()});
   const pb=$("pub");if(pb)pb.onclick=async()=>{keep();
-    if(m.title.trim().length<3||!m.when.trim()||!m.where.trim()){$("err").textContent=t.badForm;return haptic("error")}
-    pb.disabled=true;const r=await load("create",{mission:m});
-    if(r.ok){haptic("success");toast(t.created);S.nm={...m,title:"",desc:"",when:"",where:""};S.tview="list";render();syncBack()}else{pb.disabled=false;$("err").textContent=t.errP;haptic("error")}};
+    if(!m.date){$("err").textContent=t.pickDate;return haptic("error")}
+    if(m.title.trim().length<3||!m.where.trim()){$("err").textContent=t.badForm;return haptic("error")}
+    pb.disabled=true;const r=m.id?await load("edit",{id:m.id,mission:m}):await load("create",{mission:m});
+    if(r.ok){haptic("success");toast(m.id?t.saved:t.created);S.nm=blank();S.cal=null;S.tview="list";render();syncBack()}
+    else{pb.disabled=false;$("err").textContent=r.error==="spots_below_count"?t.spotsLow:t.errP;haptic("error")}};
+  v.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{const it=mine.find(x=>x.id===b.dataset.ed);
+    S.nm={id:it.id,type:it.type,title:it.title,desc:it.desc,cat:it.cat,age:it.age,spots:it.spots,gp:it.gp||20,date:it.date,time:it.time,where:it.where};
+    S.cal=null;S.tview="new";render();syncBack();$("view").scrollTop=0});
+  v.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>share(mine.find(x=>x.id===b.dataset.sh)));
   v.querySelectorAll("[data-ok]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await load("confirm",{id:b.dataset.ok,student:b.dataset.st});
     if(r.ok){haptic("success");toast(t.sentT)}else render()});
   v.querySelectorAll("[data-close]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await load("close",{id:b.dataset.close});if(r.ok)toast(t.closedT)});
+  v.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const it=mine.find(x=>x.id===b.dataset.del),q=plain(t.delQ,{t:it.title});
+    const go=async ok=>{if(!ok)return;const r=await load("delete",{id:it.id});if(r.ok){haptic("success");toast(t.deleted)}};
+    tg&&tg.showConfirm?tg.showConfirm(q,go):go(window.confirm(q))});
 }
 function closeSheet(){$("scrim").classList.remove("on");$("sheet").classList.remove("on");syncBack()}
 $("scrim").onclick=closeSheet;
